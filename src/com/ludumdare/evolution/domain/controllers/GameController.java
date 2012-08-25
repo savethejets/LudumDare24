@@ -1,6 +1,6 @@
 package com.ludumdare.evolution.domain.controllers;
 
-import com.ludumdare.evolution.domain.entities.Player;
+import com.ludumdare.evolution.domain.entities.Mobi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,27 +8,27 @@ import java.util.List;
 public class GameController {
     private static GameController ourInstance = new GameController();
 
-    private Player currentPlayer;
+    private Mobi currentMobi;
 
-    private List<Player> otherPlayers;
+    private List<Mobi> otherMobis;
 
     public static GameController getInstance() {
         return ourInstance;
     }
 
     private GameController() {
-        otherPlayers = new ArrayList<Player>();
+        otherMobis = new ArrayList<Mobi>();
     }
 
     public void initGame(/*Level level*/) {
 
     }
 
-    public Player getCurrentPlayer() {
-        return currentPlayer;
+    public Mobi getCurrentMobi() {
+        return currentMobi;
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    public void setCurrentMobi(Mobi currentMobi) {
+        this.currentMobi = currentMobi;
     }
 }

@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.ludumdare.evolution.LudumDareMain;
 import com.ludumdare.evolution.domain.controllers.GameController;
-import com.ludumdare.evolution.domain.entities.Player;
+import com.ludumdare.evolution.domain.entities.Mobi;
 import com.ludumdare.evolution.domain.scene2d.AbstractScreen;
 
 import java.util.List;
@@ -56,9 +56,15 @@ public class GameScreen extends AbstractScreen {
 
         cam = new OrthographicCamera(28, 20);
 
-        Player player = new Player(world);
+        Mobi mobi = new Mobi(world);
 
-        GameController.getInstance().setCurrentPlayer(player);
+        GameController.getInstance().setCurrentMobi(mobi);
+
+//        TiledMap map = TiledLoader.createMap(Gdx.files.internal("data/tiledmap/desert_astar3.tmx"));
+//
+//        SimpleTileAtlas simpleTileAtlas = new SimpleTileAtlas(map, Gdx.files.internal("data/tiledmap/"));
+//
+//        TileMapRenderer tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 32, 32);
     }
 
     private Body createEdge(BodyDef.BodyType type, float x1, float y1, float x2, float y2, float density) {
@@ -78,20 +84,20 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
 
-        Player currentPlayer = GameController.getInstance().getCurrentPlayer();
+        Mobi currentMobi = GameController.getInstance().getCurrentMobi();
 
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-        cam.position.set(currentPlayer.getBox2dPosition().x, currentPlayer.getBox2dPosition().y, 0);
+        cam.position.set(currentMobi.getBox2dPosition().x, currentMobi.getBox2dPosition().y, 0);
 
         cam.update();
 
         renderer.render(world, cam.combined);
 
-        Vector2 vel = currentPlayer.getLinearVelocity();
-        Vector2 pos = currentPlayer.getBox2dPosition();
+        Vector2 vel = currentMobi.getLinearVelocity();
+        Vector2 pos = currentMobi.getBox2dPosition();
 
-        boolean grounded = currentPlayer.isPlayerGrounded(Gdx.graphics.getDeltaTime(), world);
+        boolean grounded = currentMobi.isPlayerGrounded(Gdx.graphics.getDeltaTime(), world);
 
         if (grounded) {
             lastGroundTime = TimeUtils.nanoTime();
@@ -102,38 +108,38 @@ public class GameScreen extends AbstractScreen {
         }
 
         // cap max velocity on x
-        if (Math.abs(vel.x) > currentPlayer.getMaxVelocity()) {
+        if (Math.abs(vel.x) > currentMobi.getMaxVelocity()) {
 
-            vel.x = Math.signum(vel.x) * currentPlayer.getMaxVelocity();
-            currentPlayer.setLinearVelocity(vel.x, vel.y);
+            vel.x = Math.signum(vel.x) * currentMobi.getMaxVelocity();
+            currentMobi.setLinearVelocity(vel.x, vel.y);
 
         }
 
         // calculate stilltime & damp
         if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) {
             stillTime += Gdx.graphics.getDeltaTime();
-            currentPlayer.setLinearVelocity(vel.x * 0.9f, vel.y);
+            currentMobi.setLinearVelocity(vel.x * 0.9f, vel.y);
         } else {
             stillTime = 0;
         }
 
         // disable friction while jumping
         if (!grounded) {
-            currentPlayer.setFriction(0.0f);
+            currentMobi.setFriction(0.0f);
         } else {
             if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D) && stillTime > 0.2) {
-                currentPlayer.setFriction(1000f);
+                currentMobi.setFriction(1000f);
             } else {
-                currentPlayer.setFriction(0.2f);
+                currentMobi.setFriction(0.2f);
             }
 
             // dampen sudden changes in x/y of a MovingPlatform a little bit, otherwise
             // character hops :)
-            Object groundedPlatform = currentPlayer.getGroundedPlatform();
+            Object groundedPlatform = currentMobi.getGroundedPlatform();
 
 //            if (groundedPlatform != null && groundedPlatform instanceof MovingPlatform
 //                    && ((MovingPlatform) groundedPlatform).dist == 0) {
-//                currentPlayer.applyLinearImpulse(0, -24, pos.x, pos.y);
+//                currentMobi.applyLinearImpulse(0, -24, pos.x, pos.y);
 //            }
         }
 
@@ -145,29 +151,29 @@ public class GameScreen extends AbstractScreen {
         }
 
         // apply left impulse, but only if max velocity is not reached yet
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -currentPlayer.getMaxVelocity()) {
-            currentPlayer.applyLinearImpulse(-2f, 0, pos.x, pos.y);
+        if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -currentMobi.getMaxVelocity()) {
+            currentMobi.applyLinearImpulse(-2f, 0, pos.x, pos.y);
         }
 
         // apply right impulse, but only if max velocity is not reached yet
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < currentPlayer.getMaxVelocity()) {
-            currentPlayer.applyLinearImpulse(2f, 0, pos.x, pos.y);
+        if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < currentMobi.getMaxVelocity()) {
+            currentMobi.applyLinearImpulse(2f, 0, pos.x, pos.y);
         }
 
         // jump, but only when grounded
         if (jump) {
             jump = false;
             if (grounded) {
-                currentPlayer.setLinearVelocity(vel.x, 0);
+                currentMobi.setLinearVelocity(vel.x, 0);
 
                 System.out.println("vel before: " + vel.x);
-                System.out.println("jump before: " + currentPlayer.getLinearVelocity());
+                System.out.println("jump before: " + currentMobi.getLinearVelocity());
 
-                currentPlayer.setTransform(pos.x, pos.y + 0.01f, 0);
+                currentMobi.setTransform(pos.x, pos.y + 0.01f, 0);
 
-                currentPlayer.applyLinearImpulse(0, 40, pos.x, pos.y);
+                currentMobi.applyLinearImpulse(0, 40, pos.x, pos.y);
 
-                System.out.println("jump, " + currentPlayer.getLinearVelocity());
+                System.out.println("jump, " + currentMobi.getLinearVelocity());
             }
         }
 
@@ -179,7 +185,7 @@ public class GameScreen extends AbstractScreen {
 
         world.step(Gdx.graphics.getDeltaTime(), 4, 4);
 
-        currentPlayer.setAwake(true);
+        currentMobi.setAwake(true);
 
         cam.project(point.set(pos.x, pos.y, 0));
 

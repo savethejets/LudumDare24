@@ -9,7 +9,7 @@ import com.ludumdare.evolution.app.Constants;
 
 import java.util.List;
 
-public class Player extends Actor {
+public class Mobi extends Actor {
 
     private static final float MAX_VELOCITY = 14.0f;
 
@@ -19,7 +19,7 @@ public class Player extends Actor {
 
     private Object groundedPlatform;
 
-    public Player(World world) {
+    public Mobi(World world) {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;

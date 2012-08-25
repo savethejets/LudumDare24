@@ -9,6 +9,7 @@ public class DesktopStarter {
 
         cfg.title = Constants.MAIN_WINDOW_TITLE;
         cfg.useGL20 = true;
+        cfg.vSyncEnabled = true;
         cfg.width = 800;
         cfg.height = 480;
 
