@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dcfdf590-3318-4afb-b853-32dab762ba65" name="Default" comment="" />
+    <list default="true" id="dcfdf590-3318-4afb-b853-32dab762ba65" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/LudumDareMain.class" afterPath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/LudumDareMain.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/domain/entities/Player.class" afterPath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/domain/entities/Player.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/domain/scene2d/AbstractScreen.class" afterPath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/domain/scene2d/AbstractScreen.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/domain/screens/GameScreen.class" afterPath="$PROJECT_DIR$/out/production/LudumDare24/com/ludumdare/evolution/domain/screens/GameScreen.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java" afterPath="$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/Player.java" afterPath="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/Player.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/scene2d/AbstractScreen.java" afterPath="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/scene2d/AbstractScreen.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/GameScreen.java" afterPath="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/GameScreen.java" />
+    </list>
     <ignored path="LudumDare24.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -61,7 +73,7 @@
       <file leaf-file-name="LudumDareMain.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="13" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0">
+            <state line="5" column="39" selection-start="162" selection-end="162" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -69,11 +81,22 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="Game.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/sources/gdx-sources.jar!/com/badlogic/gdx/Game.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="45" column="39" selection-start="1486" selection-end="1486" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="AbstractScreen.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/scene2d/AbstractScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="52" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="32" column="56" selection-start="983" selection-end="983" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -81,7 +104,7 @@
       <file leaf-file-name="Screen.java" pinned="false" current="false" current-in-tab="false">
         <entry file="jar://$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/sources/gdx-sources.jar!/com/badlogic/gdx/Screen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="17" selection-start="1022" selection-end="1022" vertical-scroll-proportion="0.0">
+            <state line="25" column="0" selection-start="1005" selection-end="1005" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -102,7 +125,7 @@
       <file leaf-file-name="Player.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="19" selection-start="1610" selection-end="1610" vertical-scroll-proportion="0.0">
+            <state line="62" column="19" selection-start="1611" selection-end="1611" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -113,7 +136,7 @@
       <file leaf-file-name="GameScreen.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/GameScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="43" selection-start="1697" selection-end="1697" vertical-scroll-proportion="-1.8667954">
+            <state line="167" column="9" selection-start="5559" selection-end="5559" vertical-scroll-proportion="4.524887">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -121,10 +144,19 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="EdgeShape.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/sources/gdx-sources.jar!/com/badlogic/gdx/physics/box2d/EdgeShape.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="25" column="16" selection-start="569" selection-end="569" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="GameController.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/controllers/GameController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="38" selection-start="335" selection-end="335" vertical-scroll-proportion="0.0">
+            <state line="26" column="18" selection-start="577" selection-end="577" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -148,30 +180,33 @@
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/Desktop/src/LudumDareMain.java" />
         <option value="$PROJECT_DIR$/Desktop/src/DesktopStarter.java" />
-        <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/scene2d/AbstractScreen.java" />
-        <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java" />
         <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/app/Constants.java" />
         <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/World.java" />
-        <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/Player.java" />
         <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/GameWorld.java" />
         <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/controllers/GameController.java" />
         <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/SplashScreen.java" />
+        <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java" />
+        <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/Player.java" />
+        <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/scene2d/AbstractScreen.java" />
         <option value="$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/GameScreen.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="18" />
-    <option name="y" value="22" />
+    <option name="x" value="51" />
+    <option name="y" value="24" />
     <option name="width" value="1377" />
     <option name="height" value="826" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
@@ -462,7 +497,7 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="Errors" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -630,6 +665,24 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="DETECT_NESTED_COPIES" value="true" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <created>1345864279404</created>
@@ -638,14 +691,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="18" y="22" width="1377" height="826" extended-state="0" />
+    <frame x="51" y="24" width="1377" height="826" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.51631206" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2822695" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -654,8 +707,8 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26145756" sideWeight="0.8042553" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19574468" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26145756" sideWeight="0.6964539" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3035461" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -752,15 +805,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/controllers/GameController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="38" selection-start="335" selection-end="335" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/SplashScreen.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="55" column="50" selection-start="2015" selection-end="2015" vertical-scroll-proportion="0.0">
@@ -771,9 +815,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java">
+    <entry file="jar://$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/sources/gdx-sources.jar!/com/badlogic/gdx/physics/box2d/EdgeShape.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="13" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0">
+        <state line="25" column="16" selection-start="569" selection-end="569" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/controllers/GameController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="18" selection-start="577" selection-end="577" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -782,21 +833,39 @@
     </entry>
     <entry file="jar://$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/sources/gdx-sources.jar!/com/badlogic/gdx/Screen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="17" selection-start="1022" selection-end="1022" vertical-scroll-proportion="0.0">
+        <state line="25" column="0" selection-start="1005" selection-end="1005" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/sources/gdx-sources.jar!/com/badlogic/gdx/Game.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="39" selection-start="1486" selection-end="1486" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/scene2d/AbstractScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="52" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="32" column="56" selection-start="983" selection-end="983" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/LudumDareMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="39" selection-start="162" selection-end="162" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/entities/Player.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="19" selection-start="1610" selection-end="1610" vertical-scroll-proportion="0.0">
+        <state line="62" column="19" selection-start="1611" selection-end="1611" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -805,7 +874,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ludumdare/evolution/domain/screens/GameScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="43" selection-start="1697" selection-end="1697" vertical-scroll-proportion="-1.8667954">
+        <state line="167" column="9" selection-start="5559" selection-end="5559" vertical-scroll-proportion="4.524887">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

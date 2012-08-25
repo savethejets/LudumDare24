@@ -1,6 +1,7 @@
 package com.ludumdare.evolution.domain.scene2d;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.ludumdare.evolution.LudumDareMain;
 import com.ludumdare.evolution.app.Constants;
 
-public abstract class AbstractScreen implements Screen {
+public abstract class AbstractScreen extends InputAdapter implements Screen {
 
     protected final LudumDareMain game;
     protected final BitmapFont font;
@@ -77,5 +78,45 @@ public abstract class AbstractScreen implements Screen {
         batch.dispose();
         font.dispose();
 
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return super.keyDown(keycode);    
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return super.keyUp(keycode);    
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return super.keyTyped(character);    
+    }
+
+    @Override
+    public boolean touchDown(int x, int y, int pointer, int button) {
+        return super.touchDown(x, y, pointer, button);    
+    }
+
+    @Override
+    public boolean touchUp(int x, int y, int pointer, int button) {
+        return super.touchUp(x, y, pointer, button);    
+    }
+
+    @Override
+    public boolean touchDragged(int x, int y, int pointer) {
+        return super.touchDragged(x, y, pointer);    
+    }
+
+    @Override
+    public boolean touchMoved(int x, int y) {
+        return super.touchMoved(x, y);    
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return super.scrolled(amount);    
     }
 }

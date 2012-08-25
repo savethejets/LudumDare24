@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Player extends Actor {
 
-    private static final float MAX_VELOCITY = 30.f;
+    private static final float MAX_VELOCITY = 14.0f;
 
     private Body body;
     private Fixture playerPhysicsFixture;
@@ -74,7 +74,8 @@ public class Player extends Actor {
 
         List<Contact> contactList = world.getContactList();
 
-        for (Contact contact : contactList) {
+        for (int i = 0; i < contactList.size(); i++) {
+            Contact contact = contactList.get(i);
             if (contact.isTouching()
                     && (contact.getFixtureA() == playerSensorFixture || contact.getFixtureB() == playerSensorFixture)) {
 
