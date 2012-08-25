@@ -1,9 +1,9 @@
 package com.ludumdare.evolution.domain.entities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ludumdare.evolution.app.Constants;
 
@@ -11,48 +11,49 @@ import java.util.List;
 
 public class Mobi extends Actor {
 
-    private static final float MAX_VELOCITY = 14.0f;
+    private float MAX_VELOCITY = 14.0f;
+    private float JUMP_VELOCITY = 20.0f;
 
     private Body body;
     private Fixture playerPhysicsFixture;
+
     private Fixture playerSensorFixture;
 
     private Object groundedPlatform;
+    private Texture texture;
 
     public Mobi(World world) {
+
+        texture = new Texture("mobi-test.png");
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
+        body.setUserData(this);
 
         PolygonShape poly = new PolygonShape();
-        poly.setAsBox(0.45f, 1.4f);
+        poly.setAsBox(texture.getWidth() / (2 * Constants.BOX2D_SCALE_FACTOR), texture.getHeight() / (2 * Constants.BOX2D_SCALE_FACTOR));
         playerPhysicsFixture = body.createFixture(poly, 1);
         poly.dispose();
 
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.45f);
-        circle.setPosition(new Vector2(0, -1.4f));
+        circle.setRadius((texture.getWidth() / 2) / Constants.BOX2D_SCALE_FACTOR);
+        circle.setPosition(new Vector2(0, -(texture.getHeight() / (2 * Constants.BOX2D_SCALE_FACTOR))));
         playerSensorFixture = body.createFixture(circle, 0);
         circle.dispose();
 
         body.setBullet(true);
         body.setFixedRotation(true);
-
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-
-        x = body.getPosition().x * Constants.BOX2D_SCALE_FACTOR;
-        y = body.getPosition().y * Constants.BOX2D_SCALE_FACTOR;
-
     }
 
     @Override
     public void draw(SpriteBatch batch, float parentAlpha) {
-
+        batch.draw(texture, getPosition().x - texture.getWidth() / 2, getPosition().y - texture.getHeight() / 2);
     }
 
     @Override
@@ -62,6 +63,10 @@ public class Mobi extends Actor {
 
     public Vector2 getLinearVelocity() {
         return body.getLinearVelocity();
+    }
+
+    public Vector2 getPosition() {
+        return body.getPosition().mul(Constants.BOX2D_SCALE_FACTOR);
     }
 
     public Vector2 getBox2dPosition() {
@@ -83,7 +88,11 @@ public class Mobi extends Actor {
                 WorldManifold manifold = contact.getWorldManifold();
                 boolean below = true;
                 for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
-                    below &= (manifold.getPoints()[j].y < pos.y - 1.5f);
+//                    Object userData = body.getUserData();
+//                    if (userData instanceof Mobi) {
+//                        Mobi mobi = (Mobi) userData;
+                        below &= (manifold.getPoints()[j].y < pos.y);
+//                    }
                 }
 
                 if (below) {
@@ -136,5 +145,17 @@ public class Mobi extends Actor {
 
     public void setAwake(boolean awake) {
         body.setAwake(awake);
+    }
+
+    public void setPosition(int x, int y) {
+        body.setTransform(Constants.convertToBox2d(x), Constants.convertToBox2d(y), 0);
+    }
+
+    public float getBox2dHeight() {
+        return Constants.convertToBox2d(texture.getHeight());
+    }
+
+    public float getJumpVelocity() {
+        return JUMP_VELOCITY;
     }
 }

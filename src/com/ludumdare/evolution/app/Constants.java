@@ -6,4 +6,12 @@ public class Constants {
 
     //Box2d
     public static final Float BOX2D_SCALE_FACTOR = 32.0f;
+
+    public static float convertToBox2d(float input) {
+        return input / Constants.BOX2D_SCALE_FACTOR;
+    }
+
+    public static float convertFromBox2d(float input) {
+        return input * Constants.BOX2D_SCALE_FACTOR;
+    }
 }

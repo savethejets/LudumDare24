@@ -1,14 +1,17 @@
+
 package com.ludumdare.evolution.domain.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.tiled.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.ludumdare.evolution.LudumDareMain;
+import com.ludumdare.evolution.app.Constants;
 import com.ludumdare.evolution.domain.controllers.GameController;
 import com.ludumdare.evolution.domain.entities.Mobi;
 import com.ludumdare.evolution.domain.scene2d.AbstractScreen;
@@ -17,16 +20,20 @@ import java.util.List;
 
 public class GameScreen extends AbstractScreen {
 
+    private static final String COLLISION_OBJECT_GROUP = "COLLISION";
+    private static final String PLAYER_START_OBJECT_GROUP = "PLAYER_START";
+
     private World world;
 
     private Box2DDebugRenderer renderer;
     private OrthographicCamera cam;
+    private TileMapRenderer tileMapRenderer;
 
     private long lastGroundTime = 0;
     private float stillTime = 0;
-
     private boolean jump;
     private Vector3 point = new Vector3();
+    private Vector3 tmp = new Vector3();
 
     @Override
     public void dispose() {
@@ -42,43 +49,63 @@ public class GameScreen extends AbstractScreen {
 
         world = new World(new Vector2(0, -40), true);
 
-        float y1 = -1; // (float)Math.random() * 0.1f + 1;
-        float y2 = y1;
-        for (int i = 0; i < 50; i++) {
-            Body ground = createEdge(BodyDef.BodyType.StaticBody, -50 + i * 2, y1, -50 + i * 2 + 2, y2, 0);
-            y1 = y2;
-            y2 = -1; // (float)Math.random() + 1;
-        }
-
         renderer = new Box2DDebugRenderer();
 
         Gdx.input.setInputProcessor(this);
 
-        cam = new OrthographicCamera(28, 20);
+        cam = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+//        cam.zoom = 20.f;
 
         Mobi mobi = new Mobi(world);
 
         GameController.getInstance().setCurrentMobi(mobi);
 
-//        TiledMap map = TiledLoader.createMap(Gdx.files.internal("data/tiledmap/desert_astar3.tmx"));
-//
-//        SimpleTileAtlas simpleTileAtlas = new SimpleTileAtlas(map, Gdx.files.internal("data/tiledmap/"));
-//
-//        TileMapRenderer tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 32, 32);
+        createTiledMap("level1");
+
+
     }
 
-    private Body createEdge(BodyDef.BodyType type, float x1, float y1, float x2, float y2, float density) {
+    private void createTiledMap(String level) {
+        TiledMap map = TiledLoader.createMap(Gdx.files.internal("tiledmap/"+ level +".tmx"));
+
+        SimpleTileAtlas simpleTileAtlas = new SimpleTileAtlas(map, Gdx.files.internal("tiledmap/"));
+
+        tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 24, 24);
+
+        // create collision
+        for (TiledObjectGroup objectGroup : map.objectGroups) {
+            if (COLLISION_OBJECT_GROUP.equals(objectGroup.name)) {
+                for (TiledObject object : objectGroup.objects) {
+                    createStaticBoxFromObject(object);
+                }
+            }
+            if (PLAYER_START_OBJECT_GROUP.equals(objectGroup.name)) {
+                TiledObject object = objectGroup.objects.get(0);
+
+                GameController.getInstance().getCurrentMobi().setPosition(object.x, object.y);
+            }
+        }
+    }
+
+    private void createStaticBoxFromObject(TiledObject object) {
+
         BodyDef def = new BodyDef();
-        def.type = type;
+        def.type = BodyDef.BodyType.StaticBody;
         Body box = world.createBody(def);
 
-        EdgeShape poly = new EdgeShape();
-        poly.set(new Vector2(0, 0), new Vector2(x2 - x1, y2 - y1));
-        box.createFixture(poly, density);
-        box.setTransform(x1, y1, 0);
-        poly.dispose();
+        PolygonShape shape = new PolygonShape();
 
-        return box;
+        float width = object.width / Constants.BOX2D_SCALE_FACTOR;
+        float height = object.height / Constants.BOX2D_SCALE_FACTOR;
+
+        shape.setAsBox(width, height,
+                new Vector2(
+                        (object.x / Constants.BOX2D_SCALE_FACTOR) - (width / 2),
+                        (object.y / Constants.BOX2D_SCALE_FACTOR) - (height / 2)), 0);
+
+        box.createFixture(shape, 0);
+        shape.dispose();
+
     }
 
     @Override
@@ -88,11 +115,7 @@ public class GameScreen extends AbstractScreen {
 
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-        cam.position.set(currentMobi.getBox2dPosition().x, currentMobi.getBox2dPosition().y, 0);
-
         cam.update();
-
-        renderer.render(world, cam.combined);
 
         Vector2 vel = currentMobi.getLinearVelocity();
         Vector2 pos = currentMobi.getBox2dPosition();
@@ -171,7 +194,7 @@ public class GameScreen extends AbstractScreen {
 
                 currentMobi.setTransform(pos.x, pos.y + 0.01f, 0);
 
-                currentMobi.applyLinearImpulse(0, 40, pos.x, pos.y);
+                currentMobi.applyLinearImpulse(0, currentMobi.getJumpVelocity(), pos.x, pos.y);
 
                 System.out.println("jump, " + currentMobi.getLinearVelocity());
             }
@@ -187,8 +210,29 @@ public class GameScreen extends AbstractScreen {
 
         currentMobi.setAwake(true);
 
-        cam.project(point.set(pos.x, pos.y, 0));
+        tileMapRenderer.getProjectionMatrix().set(cam.combined);
 
+        Vector3 tmp = new Vector3();
+        tmp.set(0, 0, 0);
+        cam.unproject(tmp);
+
+        tileMapRenderer.render((int) tmp.x, (int) tmp.y,
+                Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        batch.setProjectionMatrix(cam.combined);
+
+        batch.begin();
+
+        currentMobi.draw(batch, 1.0f);
+
+        batch.end();
+
+        renderer.render(world, cam.combined.scale(
+                Constants.BOX2D_SCALE_FACTOR,
+                Constants.BOX2D_SCALE_FACTOR,
+                Constants.BOX2D_SCALE_FACTOR));
+
+        cam.position.set(currentMobi.getPosition().x, currentMobi.getPosition().y, 0);
     }
 
     @Override
