@@ -118,7 +118,7 @@ public class Player extends Actor {
     }
 
     public void setLinearVelocity(float v, float y) {
-        body.setLinearVelocity(x, y);
+        body.setLinearVelocity(v, y);
     }
 
     public void setFriction(float friction) {

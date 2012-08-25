@@ -29,7 +29,7 @@ public class GameScreen extends AbstractScreen {
     private Vector3 point = new Vector3();
 
     @Override
-    public void dispose () {
+    public void dispose() {
         world.dispose();
         renderer.dispose();
         batch.dispose();
@@ -61,7 +61,7 @@ public class GameScreen extends AbstractScreen {
         GameController.getInstance().setCurrentPlayer(player);
     }
 
-    private Body createEdge (BodyDef.BodyType type, float x1, float y1, float x2, float y2, float density) {
+    private Body createEdge(BodyDef.BodyType type, float x1, float y1, float x2, float y2, float density) {
         BodyDef def = new BodyDef();
         def.type = type;
         Body box = world.createBody(def);
@@ -78,11 +78,11 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
 
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
         Player currentPlayer = GameController.getInstance().getCurrentPlayer();
 
-        cam.position.set(currentPlayer.x, currentPlayer.y, 0);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        cam.position.set(currentPlayer.getBox2dPosition().x, currentPlayer.getBox2dPosition().y, 0);
 
         cam.update();
 
@@ -103,7 +103,10 @@ public class GameScreen extends AbstractScreen {
 
         // cap max velocity on x
         if (Math.abs(vel.x) > currentPlayer.getMaxVelocity()) {
-            currentPlayer.limitLinearVelocity(vel);
+
+            vel.x = Math.signum(vel.x) * currentPlayer.getMaxVelocity();
+            currentPlayer.setLinearVelocity(vel.x, vel.y);
+
         }
 
         // calculate stilltime & damp
@@ -157,6 +160,7 @@ public class GameScreen extends AbstractScreen {
             if (grounded) {
                 currentPlayer.setLinearVelocity(vel.x, 0);
 
+                System.out.println("vel before: " + vel.x);
                 System.out.println("jump before: " + currentPlayer.getLinearVelocity());
 
                 currentPlayer.setTransform(pos.x, pos.y + 0.01f, 0);
@@ -173,7 +177,7 @@ public class GameScreen extends AbstractScreen {
 //            platform.update(Math.max(1 / 30.0f, Gdx.graphics.getDeltaTime()));
 //        }
 
-        world.step(delta, 4, 4);
+        world.step(Gdx.graphics.getDeltaTime(), 4, 4);
 
         currentPlayer.setAwake(true);
 
@@ -182,13 +186,13 @@ public class GameScreen extends AbstractScreen {
     }
 
     @Override
-    public boolean keyDown (int keycode) {
+    public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.W) jump = true;
         return false;
     }
 
     @Override
-    public boolean keyUp (int keycode) {
+    public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.W) jump = false;
         return false;
     }
