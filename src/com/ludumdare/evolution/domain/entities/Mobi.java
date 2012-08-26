@@ -1,5 +1,6 @@
 package com.ludumdare.evolution.domain.entities;
 
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +15,8 @@ public class Mobi extends Actor {
     private float MAX_VELOCITY = 14.0f;
     private float JUMP_VELOCITY = 20.0f;
 
+    private MobiGenetics genetics;
+
     private Body body;
     private Fixture playerPhysicsFixture;
 
@@ -22,9 +25,22 @@ public class Mobi extends Actor {
     private Object groundedPlatform;
     private Texture texture;
 
+    private Pixmap pixmap;
+    private Texture pixmapTexture;
+
     public Mobi(World world) {
 
         texture = new Texture("mobi-test.png");
+
+        pixmap = new Pixmap(texture.getWidth(), texture.getHeight(), Pixmap.Format.RGB888);
+
+        genetics = new MobiGenetics(MobiGeneticsTypes.line);
+
+        genetics.createTexture(pixmap);
+
+        pixmapTexture = new Texture(pixmap);
+
+        pixmap.dispose();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -54,6 +70,7 @@ public class Mobi extends Actor {
     @Override
     public void draw(SpriteBatch batch, float parentAlpha) {
         batch.draw(texture, getPosition().x - texture.getWidth() / 2, getPosition().y - texture.getHeight() / 2);
+        batch.draw(pixmapTexture, getPosition().x - pixmapTexture.getWidth() / 2, getPosition().y - pixmapTexture.getHeight() / 2);
     }
 
     @Override
@@ -88,11 +105,7 @@ public class Mobi extends Actor {
                 WorldManifold manifold = contact.getWorldManifold();
                 boolean below = true;
                 for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
-//                    Object userData = body.getUserData();
-//                    if (userData instanceof Mobi) {
-//                        Mobi mobi = (Mobi) userData;
                         below &= (manifold.getPoints()[j].y < pos.y);
-//                    }
                 }
 
                 if (below) {
@@ -148,7 +161,11 @@ public class Mobi extends Actor {
     }
 
     public void setPosition(int x, int y) {
-        body.setTransform(Constants.convertToBox2d(x), Constants.convertToBox2d(y), 0);
+
+        float aWidth = Constants.convertToBox2d(texture.getWidth());
+        float aHeight = Constants.convertToBox2d(texture.getHeight());
+
+        body.setTransform(Constants.convertToBox2d(x + aWidth), Constants.convertToBox2d(y + aHeight), 0);
     }
 
     public float getBox2dHeight() {

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.tiled.*;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.ludumdare.evolution.LudumDareMain;
@@ -32,8 +31,6 @@ public class GameScreen extends AbstractScreen {
     private long lastGroundTime = 0;
     private float stillTime = 0;
     private boolean jump;
-    private Vector3 point = new Vector3();
-    private Vector3 tmp = new Vector3();
 
     @Override
     public void dispose() {
@@ -54,7 +51,8 @@ public class GameScreen extends AbstractScreen {
         Gdx.input.setInputProcessor(this);
 
         cam = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-//        cam.zoom = 20.f;
+//        cam = new OrthographicCamera(Constants.convertToBox2d(Gdx.graphics.getWidth()),Constants.convertToBox2d(Gdx.graphics.getHeight()));
+//        cam.zoom = 10.f;
 
         Mobi mobi = new Mobi(world);
 
@@ -70,7 +68,7 @@ public class GameScreen extends AbstractScreen {
 
         SimpleTileAtlas simpleTileAtlas = new SimpleTileAtlas(map, Gdx.files.internal("tiledmap/"));
 
-        tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 24, 24);
+        tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 32, 32);
 
         // create collision
         for (TiledObjectGroup objectGroup : map.objectGroups) {
@@ -95,27 +93,23 @@ public class GameScreen extends AbstractScreen {
 
         PolygonShape shape = new PolygonShape();
 
-        float width = object.width / Constants.BOX2D_SCALE_FACTOR;
-        float height = object.height / Constants.BOX2D_SCALE_FACTOR;
+        float width = object.width / (Constants.BOX2D_SCALE_FACTOR * 2);
+        float height = object.height / (Constants.BOX2D_SCALE_FACTOR * 2);
 
-        shape.setAsBox(width, height,
-                new Vector2(
-                        (object.x / Constants.BOX2D_SCALE_FACTOR) - (width / 2),
-                        (object.y / Constants.BOX2D_SCALE_FACTOR) - (height / 2)), 0);
+        shape.setAsBox(width, height);
 
         box.createFixture(shape, 0);
         shape.dispose();
 
+        float totalWidth = tileMapRenderer.getMap().width * tileMapRenderer.getMap().tileWidth;
+
+        box.setTransform(Constants.convertToBox2d(object.x + object.width/2), Constants.convertToBox2d(totalWidth - (object.y + object.height/2)), 0);
     }
 
     @Override
     public void render(float delta) {
 
         Mobi currentMobi = GameController.getInstance().getCurrentMobi();
-
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        cam.update();
 
         Vector2 vel = currentMobi.getLinearVelocity();
         Vector2 pos = currentMobi.getBox2dPosition();
@@ -210,16 +204,20 @@ public class GameScreen extends AbstractScreen {
 
         currentMobi.setAwake(true);
 
-        tileMapRenderer.getProjectionMatrix().set(cam.combined);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-        Vector3 tmp = new Vector3();
-        tmp.set(0, 0, 0);
-        cam.unproject(tmp);
+        /**
+         * A nice(?), blue backdrop.
+         */
+        Gdx.gl.glClearColor(0, 0.5f, 0.9f, 0);
 
-        tileMapRenderer.render((int) tmp.x, (int) tmp.y,
-                Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cam.update();
+
+        tileMapRenderer.render(cam);
 
         batch.setProjectionMatrix(cam.combined);
+
+        cam.position.set(currentMobi.getPosition().x, currentMobi.getPosition().y, 0);
 
         batch.begin();
 
@@ -232,13 +230,22 @@ public class GameScreen extends AbstractScreen {
                 Constants.BOX2D_SCALE_FACTOR,
                 Constants.BOX2D_SCALE_FACTOR));
 
-        cam.position.set(currentMobi.getPosition().x, currentMobi.getPosition().y, 0);
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.W) jump = true;
+
+        if (keycode == Input.Keys.T) {
+            game.setScreen(new GameScreen(game));
+        }
+
         return false;
+    }
+
+    @Override
+    public boolean touchDown(int x, int y, int pointer, int button) {
+        return super.touchDown(x, y, pointer, button);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override

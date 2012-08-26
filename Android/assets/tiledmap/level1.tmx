@@ -12,7 +12,8 @@
  <objectgroup name="COLLISION" width="24" height="24">
   <object x="0" y="448" width="768" height="160"/>
  </objectgroup>
- <objectgroup name="PLAYER_START" width="24" height="24">
+ <objectgroup name="PLAYER_START" width="24" height="24" opacity="0.95">
   <object x="64" y="416" width="32" height="32"/>
  </objectgroup>
+ <objectgroup name="MOBI" width="24" height="24"/>
 </map>
