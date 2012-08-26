@@ -192,7 +192,7 @@ public class GameScreen extends AbstractScreen {
             }
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && touchingOnlyOneOtherMobi) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D) && touchingOnlyOneOtherMobi) {
 
             List<Mobi> mobisTouching = currentMobi.getMobisCollidingWith(world);
 
@@ -203,7 +203,7 @@ public class GameScreen extends AbstractScreen {
         }
 
         // calculate stilltime & damp
-        if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             stillTime += Gdx.graphics.getDeltaTime();
             currentMobi.setLinearVelocity(vel.x * 0.9f, vel.y);
         } else {
@@ -214,7 +214,7 @@ public class GameScreen extends AbstractScreen {
         if (!grounded) {
             currentMobi.setFriction(0.0f);
         } else {
-            if (!Gdx.input.isKeyPressed(Input.Keys.A) && !Gdx.input.isKeyPressed(Input.Keys.D) && stillTime > 0.2) {
+            if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT) && stillTime > 0.2) {
                 currentMobi.setFriction(1000f);
             } else {
                 currentMobi.setFriction(0.2f);
@@ -238,12 +238,12 @@ public class GameScreen extends AbstractScreen {
         }
 
         // apply left impulse, but only if max velocity is not reached yet
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -currentMobi.getMaxVelocity()) {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && vel.x > -currentMobi.getMaxVelocity()) {
             currentMobi.applyLinearImpulse(-2f, 0, pos.x, pos.y);
         }
 
         // apply right impulse, but only if max velocity is not reached yet
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < currentMobi.getMaxVelocity()) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && vel.x < currentMobi.getMaxVelocity()) {
             currentMobi.applyLinearImpulse(2f, 0, pos.x, pos.y);
         }
 
