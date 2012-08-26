@@ -12,21 +12,28 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.ludumdare.evolution.LudumDareMain;
 import com.ludumdare.evolution.app.Constants;
 import com.ludumdare.evolution.domain.controllers.GameController;
+import com.ludumdare.evolution.domain.entities.Door;
+import com.ludumdare.evolution.domain.entities.Key;
 import com.ludumdare.evolution.domain.entities.Mobi;
 import com.ludumdare.evolution.domain.entities.MobiGenetics;
-import com.ludumdare.evolution.domain.entities.MobiGeneticsTypes;
 import com.ludumdare.evolution.domain.scene2d.AbstractScreen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameScreen extends AbstractScreen {
 
-    private static final String COLLISION_OBJECT_GROUP = "COLLISION";
     private static final String PLAYER_START_OBJECT_GROUP = "PLAYER_START";
+    private static final String COLLISION_OBJECT_GROUP = "COLLISION";
     private static final String MOBI_OBJECT_GROUP = "MOBI";
+    private static final String TETROIDS = "TETROIDS";
+    private static final String GOAL = "GOAL";
+    private static final String KEYS = "KEYS";
 
     private World world;
+
+    private HashMap<String, List<Key>> keyDoorMapping = new HashMap<String, List<Key>>();
 
     private Box2DDebugRenderer renderer;
     private OrthographicCamera cam;
@@ -35,6 +42,9 @@ public class GameScreen extends AbstractScreen {
     private ShapeRenderer currentMobiRenderer;
 
     private List<Mobi> mobis = new ArrayList<Mobi>();
+    private List<Key> keys = new ArrayList<Key>();
+    private List<Door> doors = new ArrayList<Door>();
+
     private long lastGroundTime = 0;
     private float stillTime = 0;
 
@@ -84,6 +94,52 @@ public class GameScreen extends AbstractScreen {
                     createStaticBoxFromObject(object);
                 }
             }
+            if (KEYS.equals(objectGroup.name)) {
+                for (TiledObject object : objectGroup.objects) {
+                    if (object.properties.containsKey("type")) {
+                        String type = object.properties.get("type");
+
+                        char[][] mapping = createMobiMappingFromTileTypeString(type);
+
+                        Key key = new Key(new MobiGenetics(mapping), world);
+
+                        if (object.properties.containsKey("key")) {
+                            String theKey = object.properties.get("key");
+                            key.setStringKey(theKey);
+                        } else {
+                            System.out.println("ERROR KEY WASNT DEFINED!!!");
+                        }
+                        key.setPosition(object.x, object.y);
+
+                        keys.add(key);
+                    }
+                }
+            }if (GOAL.equals(objectGroup.name)) {
+                for (TiledObject object : objectGroup.objects) {
+                    if (object.properties.containsKey("type")) {
+                        String type = object.properties.get("type");
+
+                        char[][] mapping = createMobiMappingFromTileTypeString(type);
+
+                        Key key = new Key(new MobiGenetics(mapping), world);
+
+                        if (object.properties.containsKey("key")) {
+                            String theKey = object.properties.get("key");
+                            key.setStringKey(theKey);
+                        } else {
+                            System.out.println("ERROR KEY WASNT DEFINED!!!");
+                        }
+                        key.setPosition(object.x, object.y);
+
+                        keys.add(key);
+                    }
+                }
+            }
+            if (TETROIDS.equals(objectGroup.name)) {
+                for (TiledObject object : objectGroup.objects) {
+                    createDoorFromObject(object);
+                }
+            }
             if (PLAYER_START_OBJECT_GROUP.equals(objectGroup.name)) {
                 TiledObject object = objectGroup.objects.get(0);
 
@@ -92,26 +148,49 @@ public class GameScreen extends AbstractScreen {
             if (MOBI_OBJECT_GROUP.equals(objectGroup.name)) {
                 for (TiledObject object : objectGroup.objects) {
 
-                    MobiGenetics mobiGenetics = new MobiGenetics(MobiGeneticsTypes.line);
+                    MobiGenetics mobiGenetics;
                     if (object.properties.containsKey("type")) {
                         String type = object.properties.get("type");
 
-                        if (type.equals("L")) {
-                            mobiGenetics = new MobiGenetics(MobiGeneticsTypes.lShapeRight);
+                        char[][] mapping = createMobiMappingFromTileTypeString(type);
+
+                        mobiGenetics = new MobiGenetics(mapping);
+
+                        Mobi mobi = new Mobi(mobiGenetics, world);
+
+                        mobi.setPosition(object.x, object.y);
+
+                        mobis.add(mobi);
+
+                        if (GameController.getInstance().getCurrentMobi() == null) {
+                            GameController.getInstance().setCurrentMobi(mobi);
                         }
                     }
-                    Mobi mobi = new Mobi(mobiGenetics, world);
 
-                    mobi.setPosition(object.x, object.y);
 
-                    mobis.add(mobi);
-
-                    if (GameController.getInstance().getCurrentMobi() == null) {
-                        GameController.getInstance().setCurrentMobi(mobi);
-                    }
                 }
             }
         }
+    }
+
+    private char[][] createMobiMappingFromTileTypeString(String type) {
+        char[][] mapping = new char[MobiGenetics.GENETIC_MAP_SIZE][MobiGenetics.GENETIC_MAP_SIZE];
+
+        int j = 0;
+        int k = 0;
+        for (int i = 0; i < type.length(); i++) {
+            mapping[j][k] = (char) ((type.charAt(i) == '0') ? 0 : 1);
+            k++;
+
+            if (k >= MobiGenetics.GENETIC_MAP_SIZE) {
+                k = 0;
+                j++;
+            }
+            if (j >= MobiGenetics.GENETIC_MAP_SIZE) {
+                j = 0;
+            }
+        }
+        return mapping;
     }
 
     private void createStaticBoxFromObject(TiledObject object) {
@@ -133,6 +212,48 @@ public class GameScreen extends AbstractScreen {
         float totalWidth = tileMapRenderer.getMap().width * tileMapRenderer.getMap().tileWidth;
 
         box.setTransform(Constants.convertToBox2d(object.x + object.width / 2), Constants.convertToBox2d(totalWidth - (object.y + object.height / 2)), 0);
+    }
+
+    private void createDoorFromObject(TiledObject object) {
+
+        BodyDef def = new BodyDef();
+        def.type = BodyDef.BodyType.StaticBody;
+        Body box = world.createBody(def);
+
+        PolygonShape shape = new PolygonShape();
+
+        float width = object.width / (Constants.BOX2D_SCALE_FACTOR * 2);
+        float height = object.height / (Constants.BOX2D_SCALE_FACTOR * 2);
+
+        shape.setAsBox(width, height);
+
+        Filter filter = new Filter();
+        filter.maskBits = 0x0002;
+        filter.categoryBits = 0x0002;
+
+        Fixture fixture = box.createFixture(shape, 0);
+
+        fixture.setFilterData(filter);
+
+        shape.dispose();
+
+        float totalWidth = tileMapRenderer.getMap().width * tileMapRenderer.getMap().tileWidth;
+
+        box.setTransform(Constants.convertToBox2d(object.x + object.width / 2), Constants.convertToBox2d(totalWidth - (object.y + object.height / 2)), 0);
+
+        Door door = new Door(box, object.width, object.height);
+
+        if (object.properties.containsKey("key")) {
+            String key = object.properties.get("key");
+
+            for (Key aKey : keys) {
+                if (aKey.getStringKey().equals(key)) {
+                    aKey.addDoor(door);
+                }
+            }
+        }
+
+        doors.add(door);
     }
 
     @Override
@@ -189,6 +310,13 @@ public class GameScreen extends AbstractScreen {
                 }
 
                 lastSexTime = TimeUtils.millis();
+            }
+        }
+
+        if (currentMobi.isMobiTouchingOnlyOneOtherKey(world) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            Key key = currentMobi.getKeyCollidingWith(world);
+            if (key != null) {
+                key.unlock(currentMobi, world, this);
             }
         }
 
@@ -290,6 +418,14 @@ public class GameScreen extends AbstractScreen {
             mobi.draw(batch, 1.0f);
         }
 
+        for (Key key : keys) {
+            key.draw(batch, 1.0f);
+        }
+
+        for (Door door : doors) {
+            door.draw(batch, 1.0f);
+        }
+
         batch.end();
 
         currentMobiRenderer.setProjectionMatrix(cam.combined);
@@ -310,7 +446,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.W) jump = true;
+        if (keycode == Input.Keys.UP) jump = true;
 
         if (keycode == Input.Keys.T) {
             game.setScreen(new GameScreen(game));
@@ -321,7 +457,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.W) jump = false;
+        if (keycode == Input.Keys.UP) jump = false;
 
         if (keycode == Input.Keys.E && !jump) {
             Mobi currentMobi = GameController.getInstance().getCurrentMobi();
@@ -355,5 +491,17 @@ public class GameScreen extends AbstractScreen {
             GameController.getInstance().setCurrentMobi(mobis.get(i));
         }
         return false;
+    }
+
+    public List<Mobi> getMobis() {
+        return mobis;
+    }
+
+    public List<Key> getKeys() {
+        return keys;
+    }
+
+    public List<Door> getDoors() {
+        return doors;
     }
 }

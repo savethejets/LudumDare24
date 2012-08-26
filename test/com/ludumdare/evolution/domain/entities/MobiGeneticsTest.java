@@ -8,7 +8,7 @@ public class MobiGeneticsTest extends TestCase {
     public void testMate() throws Exception {
 
         MobiGenetics parentA = new MobiGenetics(MobiGeneticsTypes.line);
-        MobiGenetics parentB = new MobiGenetics(MobiGeneticsTypes.rowBottom);
+        MobiGenetics parentB = new MobiGenetics(MobiGeneticsTypes.Three);
 
         List<MobiGenetics> children = parentA.mateWith(parentB);
 

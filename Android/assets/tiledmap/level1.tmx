@@ -15,12 +15,34 @@
  <objectgroup name="MOBI" width="24" height="24">
   <object x="192" y="416" width="32" height="32">
    <properties>
-    <property name="type" value="L"/>
+    <property name="type" value="000100111"/>
    </properties>
   </object>
-  <object x="128" y="416" width="32" height="32"/>
+  <object x="128" y="416" width="32" height="32">
+   <properties>
+    <property name="type" value="010010010"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup name="PLAYER_START" width="24" height="24" opacity="0.93">
+ <objectgroup name="PLAYER_START" width="24" height="24">
   <object x="64" y="416" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="KEYS" width="24" height="24">
+  <object x="384" y="416" width="32" height="32">
+   <properties>
+    <property name="key" value="1"/>
+    <property name="type" value="111111000"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="TETROIDS" width="24" height="24">
+  <object x="448" y="32" width="96" height="416">
+   <properties>
+    <property name="key" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="GOAL" width="24" height="24">
+  <object x="704" y="416" width="32" height="32"/>
  </objectgroup>
 </map>

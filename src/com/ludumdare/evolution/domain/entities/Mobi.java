@@ -1,8 +1,10 @@
 package com.ludumdare.evolution.domain.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -14,79 +16,102 @@ import java.util.List;
 public class Mobi extends Actor {
 
     private float MAX_VELOCITY = 14.0f;
-    private float JUMP_VELOCITY = 8.0f;
+    private float JUMP_VELOCITY = 25.0f;
 
-    private MobiGenetics genetics;
+    protected MobiGenetics genetics;
 
-    private Body body;
+    protected Body body;
+
     private Fixture playerPhysicsFixture;
-
     private Fixture playerSensorFixture;
 
     private Object groundedPlatform;
     private Texture texture;
 
     private Pixmap pixmap;
-    private Texture pixmapTexture;
+    private ShapeRenderer renderer = new ShapeRenderer();
 
     public Mobi(MobiGenetics mobiGenetics, World world) {
+        genetics = mobiGenetics;
+
         initTexture();
 
-        genetics = mobiGenetics;
+        genetics.createTexture(pixmap);
+
+        pixmap.dispose();
 
         initBoxPhysics(world);
     }
 
     public Mobi(World world) {
 
+        genetics = new MobiGenetics(MobiGeneticsTypes.line);
+
         initTexture();
 
-        genetics = new MobiGenetics(MobiGeneticsTypes.line);
+        genetics.createTexture(pixmap);
+
+        pixmap.dispose();
 
         initBoxPhysics(world);
     }
 
     private void initTexture() {
-        texture = new Texture("mobi-test.png");
+
+        pixmap = new Pixmap(64, 64, Pixmap.Format.RGB888);
+
+        texture = new Texture(pixmap);
+
     }
 
-    private void initBoxPhysics(World world) {
+    protected void initBoxPhysics(World world) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData(this);
 
-        int posXStart;
-        int posYStart = texture.getHeight() / 3 / 4;
 
-        int widthInc = texture.getWidth() / 3 / 2;
-        int heightInc = texture.getHeight() / 3 / 2 ;
+        float widthInc = pixmap.getWidth() / 3;
+        float heightInc = pixmap.getHeight() / 3;
 
+        float posYStart = getPosition().y - texture.getHeight() + heightInc/2;
         for (int i = 0; i < 3; i++) {
             char[] chars = genetics.geneticMap[i];
-            posXStart = texture.getWidth() / 3 / 4;
+            float posXStart = getPosition().x - texture.getWidth() / 2 + widthInc / 2;
             for (int j = 0; j < chars.length; j++) {
                 char aChar = chars[j];
                 if (aChar == 1) {
                     PolygonShape poly = new PolygonShape();
-                    poly.setAsBox(widthInc / Constants.BOX2D_SCALE_FACTOR, heightInc / Constants.BOX2D_SCALE_FACTOR,
+                    poly.setAsBox(widthInc/ 2 / Constants.BOX2D_SCALE_FACTOR, heightInc/ 2 / Constants.BOX2D_SCALE_FACTOR,
                             new Vector2(posXStart / Constants.BOX2D_SCALE_FACTOR, posYStart / Constants.BOX2D_SCALE_FACTOR), 0);
-
                     playerPhysicsFixture = body.createFixture(poly, 1);
+
+                    Filter filter = new Filter();
+
+                    filter.categoryBits = 0x0002;
+                    filter.maskBits = 0x0002;
+
+                    playerPhysicsFixture.setFilterData(filter);
+
                     poly.dispose();
                 }
-                posXStart += widthInc + (widthInc );
+                posXStart += widthInc;
             }
-            posYStart += heightInc + (heightInc );
+            posYStart += heightInc;
         }
 
         CircleShape circle = new CircleShape();
-        circle.setRadius((texture.getWidth() / 2) / Constants.BOX2D_SCALE_FACTOR);
-        circle.setPosition(new Vector2(0, -(texture.getHeight() / (2 * Constants.BOX2D_SCALE_FACTOR))));
+        circle.setRadius((texture.getWidth() /3 / 2) / Constants.BOX2D_SCALE_FACTOR);
+        circle.setPosition(new Vector2(0, -(texture.getHeight() / (Constants.BOX2D_SCALE_FACTOR * 1.02f))));
+
         playerSensorFixture = body.createFixture(circle, 0);
+
         Filter filter = new Filter();
-        filter.groupIndex = -1;
+
+        filter.groupIndex = -2;
+
         playerSensorFixture.setFilterData(filter);
+
         circle.dispose();
 
         body.setBullet(true);
@@ -100,8 +125,42 @@ public class Mobi extends Actor {
 
     @Override
     public void draw(SpriteBatch batch, float parentAlpha) {
-        batch.draw(texture, getPosition().x - texture.getWidth() / 2, getPosition().y - texture.getHeight() / 2);
+        renderer.setProjectionMatrix(batch.getProjectionMatrix());
+
+        float posYStart = getPosition().y - texture.getHeight();
+        float widthInc = pixmap.getWidth() / 3;
+        float heightInc = pixmap.getHeight() / 3;
+
+        for (int i = 0; i < 3; i++) {
+            char[] chars = genetics.geneticMap[i];
+            float posXStart = getPosition().x - texture.getWidth() / 2;
+            for (int j = 0; j < chars.length; j++) {
+                char aChar = chars[j];
+                if (aChar == 1) {
+                    renderer.begin(ShapeRenderer.ShapeType.FilledRectangle);
+                    renderer.setColor(getFilledInColour());
+                    renderer.filledRect(posXStart, posYStart, widthInc, heightInc);
+                    renderer.end();
+                } else {
+                    renderer.begin(ShapeRenderer.ShapeType.Rectangle);
+                    Color gray = Color.GRAY;
+                    gray.a = 0.01f;
+                    renderer.setColor(gray);
+                    renderer.rect(posXStart, posYStart, widthInc, heightInc);
+                    renderer.end();
+                }
+                posXStart += widthInc;
+            }
+            posYStart += heightInc;
+        }
+
+
+//        batch.draw(texture, getPosition().x - texture.getWidth() / 2, getPosition().y - texture.getHeight() / 2);
 //        batch.draw(pixmapTexture, getPosition().x - pixmapTexture.getWidth() / 2, getPosition().y - pixmapTexture.getHeight() / 2);
+    }
+
+    protected Color getFilledInColour() {
+        return Color.BLACK;
     }
 
     @Override
@@ -144,6 +203,29 @@ public class Mobi extends Actor {
         return otherMobis.size() == 1;
     }
 
+    public boolean isMobiTouchingOnlyOneOtherKey(World world) {
+
+        List<Contact> contactList = world.getContactList();
+
+        List<Key> otherMobis = new ArrayList<Key>();
+
+        for (Contact contact : contactList) {
+            if (contact.isTouching() && contact.getFixtureA().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureB().getBody().getUserData();
+                if (userData instanceof Key && !otherMobis.contains(userData)) {
+                    otherMobis.add((Key) userData);
+                }
+            } else if (contact.getFixtureB().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureA().getBody().getUserData();
+                if (userData instanceof Key && !otherMobis.contains(userData)) {
+                    otherMobis.add((Key) userData);
+                }
+            }
+        }
+
+        return otherMobis.size() == 1;
+    }
+
     public List<Mobi> getMobisCollidingWith(World world) {
 
         List<Contact> contactList = world.getContactList();
@@ -165,6 +247,29 @@ public class Mobi extends Actor {
         }
 
         return otherMobis;
+    }
+
+    public Key getKeyCollidingWith(World world) {
+
+        List<Contact> contactList = world.getContactList();
+
+        List<Key> otherMobis = new ArrayList<Key>();
+
+        for (Contact contact : contactList) {
+            if (contact.isTouching() && contact.getFixtureA().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureB().getBody().getUserData();
+                if (userData instanceof Key && !otherMobis.contains(userData)) {
+                    otherMobis.add((Key) userData);
+                }
+            } else if (contact.getFixtureB().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureA().getBody().getUserData();
+                if (userData instanceof Key && !otherMobis.contains(userData)) {
+                    otherMobis.add((Key) userData);
+                }
+            }
+        }
+
+        return !otherMobis.isEmpty() ? otherMobis.get(0) : null;
     }
 
     public boolean isPlayerGrounded (float deltaTime, World world) {

@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class MobiGenetics {
 
-    private static final int GENETIC_MAP_SIZE = 3;
+    public static final int GENETIC_MAP_SIZE = 3;
 
     char[][] geneticMap;
 
@@ -23,6 +23,32 @@ public class MobiGenetics {
 
     protected void setGeneticMapAt(int i, int j, char value) {
         geneticMap[i][j] = value;
+    }
+
+    public char[][] combineAll(MobiGenetics parentB) {
+
+        char[][] map = new char[geneticMap.length][geneticMap.length];
+        for (int i = 0; i < geneticMap.length; i++) {
+            char[] chars = geneticMap[i];
+            for (int j = 0; j < chars.length; j++) {
+                char aChar = chars[j];
+                map[i][j] =  (char) (parentB.geneticMap[i][j] & aChar);
+            }
+        }
+        return map;
+    }
+
+    public static boolean matchesCompleteMap(char[][] map) {
+        for (int i = 0; i < map.length; i++) {
+            char[] chars = map[i];
+            for (int j = 0; j < chars.length; j++) {
+                char aChar = chars[j];
+                if (aChar != MobiGeneticsTypes.complete[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public List<MobiGenetics> mateWith(MobiGenetics parentB) {
@@ -55,6 +81,7 @@ public class MobiGenetics {
 
     public void createTexture(Pixmap pixmap) {
 
+
         int posXStart = 0;
         int posYStart = 0;
 
@@ -67,9 +94,6 @@ public class MobiGenetics {
                 char aChar = chars[j];
                 if (aChar == 1) {
                     pixmap.setColor(Color.GREEN);
-                    pixmap.fillRectangle(posXStart, posYStart, widthInc, heightInc);
-                } else {
-                    pixmap.setColor(Color.GRAY);
                     pixmap.fillRectangle(posXStart, posYStart, widthInc, heightInc);
                 }
                 posXStart += widthInc;
