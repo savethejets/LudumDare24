@@ -8,12 +8,13 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.ludumdare.evolution.app.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Mobi extends Actor {
 
     private float MAX_VELOCITY = 14.0f;
-    private float JUMP_VELOCITY = 20.0f;
+    private float JUMP_VELOCITY = 8.0f;
 
     private MobiGenetics genetics;
 
@@ -28,34 +29,64 @@ public class Mobi extends Actor {
     private Pixmap pixmap;
     private Texture pixmapTexture;
 
+    public Mobi(MobiGenetics mobiGenetics, World world) {
+        initTexture();
+
+        genetics = mobiGenetics;
+
+        initBoxPhysics(world);
+    }
+
     public Mobi(World world) {
 
-        texture = new Texture("mobi-test.png");
-
-        pixmap = new Pixmap(texture.getWidth(), texture.getHeight(), Pixmap.Format.RGB888);
+        initTexture();
 
         genetics = new MobiGenetics(MobiGeneticsTypes.line);
 
-        genetics.createTexture(pixmap);
+        initBoxPhysics(world);
+    }
 
-        pixmapTexture = new Texture(pixmap);
+    private void initTexture() {
+        texture = new Texture("mobi-test.png");
+    }
 
-        pixmap.dispose();
-
+    private void initBoxPhysics(World world) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData(this);
 
-        PolygonShape poly = new PolygonShape();
-        poly.setAsBox(texture.getWidth() / (2 * Constants.BOX2D_SCALE_FACTOR), texture.getHeight() / (2 * Constants.BOX2D_SCALE_FACTOR));
-        playerPhysicsFixture = body.createFixture(poly, 1);
-        poly.dispose();
+        int posXStart;
+        int posYStart = texture.getHeight() / 3 / 4;
+
+        int widthInc = texture.getWidth() / 3 / 2;
+        int heightInc = texture.getHeight() / 3 / 2 ;
+
+        for (int i = 0; i < 3; i++) {
+            char[] chars = genetics.geneticMap[i];
+            posXStart = texture.getWidth() / 3 / 4;
+            for (int j = 0; j < chars.length; j++) {
+                char aChar = chars[j];
+                if (aChar == 1) {
+                    PolygonShape poly = new PolygonShape();
+                    poly.setAsBox(widthInc / Constants.BOX2D_SCALE_FACTOR, heightInc / Constants.BOX2D_SCALE_FACTOR,
+                            new Vector2(posXStart / Constants.BOX2D_SCALE_FACTOR, posYStart / Constants.BOX2D_SCALE_FACTOR), 0);
+
+                    playerPhysicsFixture = body.createFixture(poly, 1);
+                    poly.dispose();
+                }
+                posXStart += widthInc + (widthInc );
+            }
+            posYStart += heightInc + (heightInc );
+        }
 
         CircleShape circle = new CircleShape();
         circle.setRadius((texture.getWidth() / 2) / Constants.BOX2D_SCALE_FACTOR);
         circle.setPosition(new Vector2(0, -(texture.getHeight() / (2 * Constants.BOX2D_SCALE_FACTOR))));
         playerSensorFixture = body.createFixture(circle, 0);
+        Filter filter = new Filter();
+        filter.groupIndex = -1;
+        playerSensorFixture.setFilterData(filter);
         circle.dispose();
 
         body.setBullet(true);
@@ -70,7 +101,7 @@ public class Mobi extends Actor {
     @Override
     public void draw(SpriteBatch batch, float parentAlpha) {
         batch.draw(texture, getPosition().x - texture.getWidth() / 2, getPosition().y - texture.getHeight() / 2);
-        batch.draw(pixmapTexture, getPosition().x - pixmapTexture.getWidth() / 2, getPosition().y - pixmapTexture.getHeight() / 2);
+//        batch.draw(pixmapTexture, getPosition().x - pixmapTexture.getWidth() / 2, getPosition().y - pixmapTexture.getHeight() / 2);
     }
 
     @Override
@@ -88,6 +119,52 @@ public class Mobi extends Actor {
 
     public Vector2 getBox2dPosition() {
         return body.getPosition();
+    }
+
+    public boolean isMobiTouchingOnlyOneOtherMobi(World world) {
+
+        List<Contact> contactList = world.getContactList();
+
+        List<Mobi> otherMobis = new ArrayList<Mobi>();
+
+        for (Contact contact : contactList) {
+            if (contact.isTouching() && contact.getFixtureA().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureB().getBody().getUserData();
+                if (userData instanceof Mobi && !otherMobis.contains(userData)) {
+                    otherMobis.add((Mobi) userData);
+                }
+            } else if (contact.getFixtureB().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureA().getBody().getUserData();
+                if (userData instanceof Mobi && !otherMobis.contains(userData)) {
+                    otherMobis.add((Mobi) userData);
+                }
+            }
+        }
+
+        return otherMobis.size() == 1;
+    }
+
+    public List<Mobi> getMobisCollidingWith(World world) {
+
+        List<Contact> contactList = world.getContactList();
+
+        List<Mobi> otherMobis = new ArrayList<Mobi>();
+
+        for (Contact contact : contactList) {
+            if (contact.isTouching() && contact.getFixtureA().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureB().getBody().getUserData();
+                if (userData instanceof Mobi && !otherMobis.contains(userData)) {
+                    otherMobis.add((Mobi) userData);
+                }
+            } else if (contact.getFixtureB().getBody().getUserData() == this) {
+                Object userData = contact.getFixtureA().getBody().getUserData();
+                if (userData instanceof Mobi && !otherMobis.contains(userData)) {
+                    otherMobis.add((Mobi) userData);
+                }
+            }
+        }
+
+        return otherMobis;
     }
 
     public boolean isPlayerGrounded (float deltaTime, World world) {
@@ -144,8 +221,12 @@ public class Mobi extends Actor {
     }
 
     public void setFriction(float friction) {
-        playerPhysicsFixture.setFriction(friction);
-        playerSensorFixture.setFriction(friction);
+        if (playerPhysicsFixture != null) {
+            playerPhysicsFixture.setFriction(friction);
+        }
+        if (playerSensorFixture != null) {
+            playerSensorFixture.setFriction(friction);
+        }
     }
 
     public void applyLinearImpulse(float i, float i1, float x, float y) {
@@ -174,5 +255,24 @@ public class Mobi extends Actor {
 
     public float getJumpVelocity() {
         return JUMP_VELOCITY;
+    }
+
+    public float getTextureHeight() {
+        return texture.getHeight();
+    }
+
+    public float getTextureWidth() {
+        return texture.getWidth();
+    }
+
+    public List<MobiGenetics> mate(Mobi userData) {
+        System.out.println("AWWW YEAH!");
+
+        return genetics.mateWith(userData.genetics);
+    }
+
+
+    public void destroy(World world) {
+        world.destroyBody(body);
     }
 }
