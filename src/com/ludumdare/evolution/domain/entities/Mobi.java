@@ -141,6 +141,12 @@ public class Mobi extends Actor {
                     renderer.setColor(getFilledInColour());
                     renderer.filledRect(posXStart, posYStart, widthInc, heightInc);
                     renderer.end();
+                } else if (aChar == 2) {
+                    renderer.begin(ShapeRenderer.ShapeType.FilledRectangle);
+                    Color red = Color.RED;
+                    renderer.setColor(red);
+                    renderer.filledRect(posXStart, posYStart, widthInc, heightInc);
+                    renderer.end();
                 } else {
                     renderer.begin(ShapeRenderer.ShapeType.Rectangle);
                     Color gray = Color.GRAY;
@@ -371,8 +377,6 @@ public class Mobi extends Actor {
     }
 
     public List<MobiGenetics> mate(Mobi userData) {
-        System.out.println("AWWW YEAH!");
-
         return genetics.mateWith(userData.genetics);
     }
 

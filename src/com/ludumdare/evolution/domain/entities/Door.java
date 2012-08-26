@@ -20,6 +20,7 @@ public class Door extends Actor {
         this.body = body;
         this.width = width;
         this.height = height;
+        this.colour = Color.CYAN;
     }
 
     @Override

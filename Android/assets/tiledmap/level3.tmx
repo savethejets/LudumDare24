@@ -2,11 +2,45 @@
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" orientation="orthogonal" width="24" height="24" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="blocks" tilewidth="32" tileheight="32">
-  <image source="blocks.png" width="64" height="128"/>
+  <image source="blocks.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="17" name="tut3" tilewidth="32" tileheight="32">
+  <image source="../tut3.png" width="256" height="256"/>
  </tileset>
  <layer name="Tile Layer 1" width="24" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYBSMglFACmCF0kxkYmRArDpiATbzqQnoYT41wmEUjAJCAAAo+zOfAAkAAA==
+   H4sIAAAAAAAAA+3Ntw2AQBQE0SOkDKyElQ6f4vpviUmugyU5/ZFeuuucZVkhjwkzFqzYsOMQfZy4cOPBK9oNZchRoESFWrjfoEWHHgNG4b6y5GepiZoVdx9q7FUzAAkAAA==
   </data>
  </layer>
+ <objectgroup name="COLLISION" width="24" height="24">
+  <object x="0" y="448" width="768" height="160"/>
+  <object x="768" y="0" width="512" height="800"/>
+  <object x="-160" y="-288" width="1248" height="288"/>
+  <object x="-416" y="-32" width="416" height="800"/>
+ </objectgroup>
+ <objectgroup name="MOBI" width="24" height="24">
+  <object x="192" y="416" width="32" height="32">
+   <properties>
+    <property name="type" value="110111111"/>
+   </properties>
+  </object>
+  <object x="320" y="416" width="32" height="32">
+   <properties>
+    <property name="type" value="010010010"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="PLAYER_START" width="24" height="24">
+  <object x="64" y="416" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="KEYS" width="24" height="24"/>
+ <objectgroup name="TETROIDS" width="24" height="24"/>
+ <objectgroup name="GOAL" width="24" height="24">
+  <object x="608" y="416" width="32" height="32">
+   <properties>
+    <property name="next-level" value="level4"/>
+    <property name="type" value="001000000"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

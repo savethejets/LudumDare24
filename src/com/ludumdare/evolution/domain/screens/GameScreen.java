@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.tiled.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -12,10 +13,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.ludumdare.evolution.LudumDareMain;
 import com.ludumdare.evolution.app.Constants;
 import com.ludumdare.evolution.domain.controllers.GameController;
-import com.ludumdare.evolution.domain.entities.Door;
-import com.ludumdare.evolution.domain.entities.Key;
-import com.ludumdare.evolution.domain.entities.Mobi;
-import com.ludumdare.evolution.domain.entities.MobiGenetics;
+import com.ludumdare.evolution.domain.entities.*;
 import com.ludumdare.evolution.domain.scene2d.AbstractScreen;
 
 import java.util.ArrayList;
@@ -40,6 +38,7 @@ public class GameScreen extends AbstractScreen {
     private TileMapRenderer tileMapRenderer;
     private ShapeRenderer shapeRenderer;
     private ShapeRenderer currentMobiRenderer;
+    private Texture backgroundSprite = new Texture("background.png");
 
     private List<Mobi> mobis = new ArrayList<Mobi>();
     private List<Key> keys = new ArrayList<Key>();
@@ -52,6 +51,8 @@ public class GameScreen extends AbstractScreen {
 
     private long lastSexTime;
 
+    private String currentLevel;
+
     @Override
     public void dispose() {
         world.dispose();
@@ -61,8 +62,14 @@ public class GameScreen extends AbstractScreen {
         super.dispose();
     }
 
-    public GameScreen(LudumDareMain game) {
+    public GameScreen(LudumDareMain game, String level) {
         super(game);
+
+        this.currentLevel = level;
+
+        if (!GameController.getInstance().isMusicPlaying()) {
+            GameController.getInstance().playNextSong();
+        }
 
         GameController.getInstance().setCurrentMobi(null);
 
@@ -74,7 +81,7 @@ public class GameScreen extends AbstractScreen {
 
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        createTiledMap("level1");
+        createTiledMap(level);
 
         shapeRenderer = new ShapeRenderer();
         currentMobiRenderer = new ShapeRenderer();
@@ -121,17 +128,15 @@ public class GameScreen extends AbstractScreen {
 
                         char[][] mapping = createMobiMappingFromTileTypeString(type);
 
-                        Key key = new Key(new MobiGenetics(mapping), world);
+                        Goal goal = new Goal(new MobiGenetics(mapping), world);
 
-                        if (object.properties.containsKey("key")) {
-                            String theKey = object.properties.get("key");
-                            key.setStringKey(theKey);
-                        } else {
-                            System.out.println("ERROR KEY WASNT DEFINED!!!");
+                        if (object.properties.containsKey("next-level")) {
+                            String theKey = object.properties.get("next-level");
+                            goal.setNextLevelString(theKey);
                         }
-                        key.setPosition(object.x, object.y);
+                        goal.setPosition(object.x, object.y);
 
-                        keys.add(key);
+                        keys.add(goal);
                     }
                 }
             }
@@ -179,7 +184,16 @@ public class GameScreen extends AbstractScreen {
         int j = 0;
         int k = 0;
         for (int i = 0; i < type.length(); i++) {
-            mapping[j][k] = (char) ((type.charAt(i) == '0') ? 0 : 1);
+            char c = type.charAt(i);
+
+            if (c == '0') {
+                mapping[j][k] = 0;
+            } else if (c == '1') {
+                mapping[j][k] = 1;
+            } else if (c == '2') {
+                mapping[j][k] = 2;
+            }
+
             k++;
 
             if (k >= MobiGenetics.GENETIC_MAP_SIZE) {
@@ -261,186 +275,192 @@ public class GameScreen extends AbstractScreen {
 
         Mobi currentMobi = GameController.getInstance().getCurrentMobi();
 
-        Vector2 vel = currentMobi.getLinearVelocity();
-        Vector2 pos = currentMobi.getBox2dPosition();
+        if (currentMobi != null) {
+            Vector2 vel = currentMobi.getLinearVelocity();
+            Vector2 pos = currentMobi.getBox2dPosition();
 
-        boolean touchingOnlyOneOtherMobi = currentMobi.isMobiTouchingOnlyOneOtherMobi(world);
+            boolean touchingOnlyOneOtherMobi = currentMobi.isMobiTouchingOnlyOneOtherMobi(world);
 
-        boolean grounded = currentMobi.isPlayerGrounded(Gdx.graphics.getDeltaTime(), world);
+            boolean grounded = currentMobi.isPlayerGrounded(Gdx.graphics.getDeltaTime(), world);
 
-        if (grounded) {
-            lastGroundTime = TimeUtils.nanoTime();
-        } else {
-            if (TimeUtils.nanoTime() - lastGroundTime < 100000000) {
-                grounded = true;
+            if (grounded) {
+                lastGroundTime = TimeUtils.nanoTime();
+            } else {
+                if (TimeUtils.nanoTime() - lastGroundTime < 100000000) {
+                    grounded = true;
+                }
             }
-        }
 
-        if (TimeUtils.millis() - lastSexTime < 2000) {
-            touchingOnlyOneOtherMobi = false;
-        }
+            if (TimeUtils.millis() - lastSexTime < 2000) {
+                touchingOnlyOneOtherMobi = false;
+            }
 
-        // cap max velocity on x
-        if (Math.abs(vel.x) > currentMobi.getMaxVelocity()) {
+            // cap max velocity on x
+            if (Math.abs(vel.x) > currentMobi.getMaxVelocity()) {
 
-            vel.x = Math.signum(vel.x) * currentMobi.getMaxVelocity();
-            currentMobi.setLinearVelocity(vel.x, vel.y);
+                vel.x = Math.signum(vel.x) * currentMobi.getMaxVelocity();
+                currentMobi.setLinearVelocity(vel.x, vel.y);
 
-        }
+            }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && touchingOnlyOneOtherMobi) {
-            List<Mobi> mobisTouching = currentMobi.getMobisCollidingWith(world);
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && touchingOnlyOneOtherMobi) {
+                List<Mobi> mobisTouching = currentMobi.getMobisCollidingWith(world);
 
-            if (mobisTouching.size() == 1) {
-                Mobi otherMobi = mobisTouching.get(0);
+                if (mobisTouching.size() == 1) {
+                    Mobi otherMobi = mobisTouching.get(0);
 
-                List<MobiGenetics> geneticsList = currentMobi.mate(otherMobi);
+                    List<MobiGenetics> geneticsList = currentMobi.mate(otherMobi);
 
-                int i = 0;
-                for (MobiGenetics mobiGenetics : geneticsList) {
-                    Mobi mobi = new Mobi(mobiGenetics, world);
+                    int i = 0;
+                    for (MobiGenetics mobiGenetics : geneticsList) {
+                        Mobi mobi = new Mobi(mobiGenetics, world);
 
-                    mobi.setPosition((int) currentMobi.getPosition().x + i, (int) (currentMobi.getPosition().y + 2 * currentMobi.getTextureHeight()));
+                        mobi.setPosition((int) currentMobi.getPosition().x + i, (int) (currentMobi.getPosition().y + 2 * currentMobi.getTextureHeight()));
 
-                    mobi.applyLinearImpulse(0, 2, mobi.getBox2dPosition().x, mobi.getBox2dPosition().y);
+                        mobi.applyLinearImpulse(0, 2, mobi.getBox2dPosition().x, mobi.getBox2dPosition().y);
 
-                    mobis.add(mobi);
+                        mobis.add(mobi);
 
-                    i += mobi.getTextureWidth();
+                        i += mobi.getTextureWidth();
+                    }
+
+                    lastSexTime = TimeUtils.millis();
+                }
+            }
+
+            if (currentMobi.isMobiTouchingOnlyOneOtherKey(world) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                Key key = currentMobi.getKeyCollidingWith(world);
+                if (key != null) {
+                    key.unlock(currentMobi, world, this);
+                }
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.D) && touchingOnlyOneOtherMobi) {
+
+                List<Mobi> mobisTouching = currentMobi.getMobisCollidingWith(world);
+
+                for (Mobi mobi : mobisTouching) {
+                    mobi.destroy(world);
+                    mobis.remove(mobi);
+                }
+            }
+
+            // calculate stilltime & damp
+            if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                stillTime += Gdx.graphics.getDeltaTime();
+                currentMobi.setLinearVelocity(vel.x * 0.9f, vel.y);
+            } else {
+                stillTime = 0;
+            }
+
+            // disable friction while jumping
+            if (!grounded) {
+                currentMobi.setFriction(0.0f);
+            } else {
+                if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT) && stillTime > 0.2) {
+                    currentMobi.setFriction(1000f);
+                } else {
+                    currentMobi.setFriction(0.2f);
                 }
 
-                lastSexTime = TimeUtils.millis();
-            }
-        }
+                // dampen sudden changes in x/y of a MovingPlatform a little bit, otherwise
+                // character hops :)
+                Object groundedPlatform = currentMobi.getGroundedPlatform();
 
-        if (currentMobi.isMobiTouchingOnlyOneOtherKey(world) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            Key key = currentMobi.getKeyCollidingWith(world);
-            if (key != null) {
-                key.unlock(currentMobi, world, this);
-            }
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && touchingOnlyOneOtherMobi) {
-
-            List<Mobi> mobisTouching = currentMobi.getMobisCollidingWith(world);
-
-            for (Mobi mobi : mobisTouching) {
-                mobi.destroy(world);
-                mobis.remove(mobi);
-            }
-        }
-
-        // calculate stilltime & damp
-        if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            stillTime += Gdx.graphics.getDeltaTime();
-            currentMobi.setLinearVelocity(vel.x * 0.9f, vel.y);
-        } else {
-            stillTime = 0;
-        }
-
-        // disable friction while jumping
-        if (!grounded) {
-            currentMobi.setFriction(0.0f);
-        } else {
-            if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT) && stillTime > 0.2) {
-                currentMobi.setFriction(1000f);
-            } else {
-                currentMobi.setFriction(0.2f);
+    //            if (groundedPlatform != null && groundedPlatform instanceof MovingPlatform
+    //                    && ((MovingPlatform) groundedPlatform).dist == 0) {
+    //                currentMobi.applyLinearImpulse(0, -24, pos.x, pos.y);
+    //            }
             }
 
-            // dampen sudden changes in x/y of a MovingPlatform a little bit, otherwise
-            // character hops :)
-            Object groundedPlatform = currentMobi.getGroundedPlatform();
-
-//            if (groundedPlatform != null && groundedPlatform instanceof MovingPlatform
-//                    && ((MovingPlatform) groundedPlatform).dist == 0) {
-//                currentMobi.applyLinearImpulse(0, -24, pos.x, pos.y);
-//            }
-        }
-
-        // since Box2D 2.2 we need to reset the friction of any existing contacts
-        List<Contact> contacts = world.getContactList();
-        for (int i = 0; i < world.getContactCount(); i++) {
-            Contact contact = contacts.get(i);
-            contact.resetFriction();
-        }
-
-        // apply left impulse, but only if max velocity is not reached yet
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && vel.x > -currentMobi.getMaxVelocity()) {
-            currentMobi.applyLinearImpulse(-2f, 0, pos.x, pos.y);
-        }
-
-        // apply right impulse, but only if max velocity is not reached yet
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && vel.x < currentMobi.getMaxVelocity()) {
-            currentMobi.applyLinearImpulse(2f, 0, pos.x, pos.y);
-        }
-
-        // jump, but only when grounded
-        if (jump) {
-            jump = false;
-            if (grounded) {
-                currentMobi.setLinearVelocity(vel.x, 0);
-
-                System.out.println("vel before: " + vel.x);
-                System.out.println("jump before: " + currentMobi.getLinearVelocity());
-
-                currentMobi.setTransform(pos.x, pos.y + 0.01f, 0);
-
-                currentMobi.applyLinearImpulse(0, currentMobi.getJumpVelocity(), pos.x, pos.y);
-
-                System.out.println("jump, " + currentMobi.getLinearVelocity());
+            // since Box2D 2.2 we need to reset the friction of any existing contacts
+            List<Contact> contacts = world.getContactList();
+            for (int i = 0; i < world.getContactCount(); i++) {
+                Contact contact = contacts.get(i);
+                contact.resetFriction();
             }
+
+            // apply left impulse, but only if max velocity is not reached yet
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && vel.x > -currentMobi.getMaxVelocity()) {
+                currentMobi.applyLinearImpulse(-2f, 0, pos.x, pos.y);
+            }
+
+            // apply right impulse, but only if max velocity is not reached yet
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && vel.x < currentMobi.getMaxVelocity()) {
+                currentMobi.applyLinearImpulse(2f, 0, pos.x, pos.y);
+            }
+
+            // jump, but only when grounded
+            if (jump) {
+                jump = false;
+                if (grounded) {
+                    currentMobi.setLinearVelocity(vel.x, 0);
+
+                    System.out.println("vel before: " + vel.x);
+                    System.out.println("jump before: " + currentMobi.getLinearVelocity());
+
+                    currentMobi.setTransform(pos.x, pos.y + 0.01f, 0);
+
+                    currentMobi.applyLinearImpulse(0, currentMobi.getJumpVelocity(), pos.x, pos.y);
+
+                    System.out.println("jump, " + currentMobi.getLinearVelocity());
+                }
+            }
+
+            world.step(Gdx.graphics.getDeltaTime(), 4, 4);
+
+            currentMobi.setAwake(true);
+
+            Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+            /**
+             * A nice(?), orangle backdrop.
+             */
+            Gdx.gl.glClearColor(1, 0.6f, 0.0f, 0);
+
+            cam.update();
+
+            tileMapRenderer.render(cam);
+
+            batch.setProjectionMatrix(cam.combined);
+
+            cam.position.set(currentMobi.getPosition().x, currentMobi.getPosition().y, 0);
+
+            batch.begin();
+
+            for (Mobi mobi : mobis) {
+                mobi.act(delta);
+                mobi.draw(batch, 1.0f);
+            }
+
+            for (Key key : keys) {
+                key.draw(batch, 1.0f);
+            }
+
+            for (Door door : doors) {
+                door.draw(batch, 1.0f);
+            }
+
+            batch.end();
+
+            currentMobiRenderer.setProjectionMatrix(cam.combined);
+            currentMobiRenderer.begin(ShapeRenderer.ShapeType.Triangle);
+            float triangleY = currentMobi.getPosition().y + Constants.convertFromBox2d(currentMobi.getBox2dHeight()) / 2 + 15;
+            currentMobiRenderer.triangle(
+                    currentMobi.getPosition().x + 10, triangleY,
+                    currentMobi.getPosition().x - 10, triangleY,
+                    currentMobi.getPosition().x, triangleY - 10);
+            currentMobiRenderer.end();
+
+            if (!GameController.getInstance().isMusicPlaying()) {
+                GameController.getInstance().playNextSong();
+            }
+
+//            renderer.render(world, cam.combined.scale(
+//                    Constants.BOX2D_SCALE_FACTOR,
+//                    Constants.BOX2D_SCALE_FACTOR,
+//                    Constants.BOX2D_SCALE_FACTOR));
         }
-
-        world.step(Gdx.graphics.getDeltaTime(), 4, 4);
-
-        currentMobi.setAwake(true);
-
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        /**
-         * A nice(?), blue backdrop.
-         */
-        Gdx.gl.glClearColor(0, 0.5f, 0.9f, 0);
-
-        cam.update();
-
-        tileMapRenderer.render(cam);
-
-        batch.setProjectionMatrix(cam.combined);
-
-        cam.position.set(currentMobi.getPosition().x, currentMobi.getPosition().y, 0);
-
-        batch.begin();
-
-        for (Mobi mobi : mobis) {
-            mobi.act(delta);
-            mobi.draw(batch, 1.0f);
-        }
-
-        for (Key key : keys) {
-            key.draw(batch, 1.0f);
-        }
-
-        for (Door door : doors) {
-            door.draw(batch, 1.0f);
-        }
-
-        batch.end();
-
-        currentMobiRenderer.setProjectionMatrix(cam.combined);
-        currentMobiRenderer.begin(ShapeRenderer.ShapeType.Triangle);
-        float triangleY = currentMobi.getPosition().y + Constants.convertFromBox2d(currentMobi.getBox2dHeight()) / 2 + 15;
-        currentMobiRenderer.triangle(
-                currentMobi.getPosition().x + 10, triangleY,
-                currentMobi.getPosition().x - 10, triangleY,
-                currentMobi.getPosition().x, triangleY - 10);
-        currentMobiRenderer.end();
-
-        renderer.render(world, cam.combined.scale(
-                Constants.BOX2D_SCALE_FACTOR,
-                Constants.BOX2D_SCALE_FACTOR,
-                Constants.BOX2D_SCALE_FACTOR));
 
     }
 
@@ -449,7 +469,11 @@ public class GameScreen extends AbstractScreen {
         if (keycode == Input.Keys.UP) jump = true;
 
         if (keycode == Input.Keys.T) {
-            game.setScreen(new GameScreen(game));
+            game.setScreen(new GameScreen(game, "level1"));
+        }
+
+        if (keycode == Input.Keys.Y) {
+            game.setScreen(new GameScreen(game, currentLevel));
         }
 
         return false;
@@ -503,5 +527,9 @@ public class GameScreen extends AbstractScreen {
 
     public List<Door> getDoors() {
         return doors;
+    }
+
+    public void goToNextLevel(String nextLevel) {
+        game.setScreen(new GameScreen(game, nextLevel));
     }
 }

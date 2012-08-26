@@ -59,16 +59,22 @@ public class MobiGenetics {
 
         Random random = new Random();
 
-        for (int t = 0; t < 4; t++) {
+        for (int t = 0; t < 1; t++) {
 
             MobiGenetics newGenetics = new MobiGenetics();
 
             for (int i = 0; i < GENETIC_MAP_SIZE; i++) {
                 for (int j = 0; j < GENETIC_MAP_SIZE; j++) {
-                    if (random.nextBoolean()) {
+                    if (parentB.geneticMap[i][j] == 1) {
                         newGenetics.setGeneticMapAt(i, j, parentB.geneticMap[i][j]);
-                    } else {
+                    } else if (parentA.geneticMap[i][j] == 1) {
                         newGenetics.setGeneticMapAt(i, j, parentA.geneticMap[i][j]);
+                    } else if ((parentB.geneticMap[i][j] == 2 || parentA.geneticMap[i][j] == 2) && random.nextBoolean()) {
+                        char value = parentB.geneticMap[i][j] == 2 ? 1 : parentB.geneticMap[i][j];
+                        newGenetics.setGeneticMapAt(i, j, value);
+                    } else {
+                        char value = parentA.geneticMap[i][j] == 2 ? 1 : parentA.geneticMap[i][j];
+                        newGenetics.setGeneticMapAt(i, j, value);
                     }
                 }
             }

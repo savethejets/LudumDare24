@@ -6,7 +6,7 @@
  </tileset>
  <layer name="Tile Layer 1" width="24" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NgGAWjYBSMguEJGHFgfHKkYM5RPKzxKBjeAABGfmMmAAkAAA==
+   H4sIAAAAAAAAA2NgGAWjYBSMguEJGGmMOUfxsMajYHgDAEYj30MACQAA
   </data>
  </layer>
  <objectgroup name="COLLISION" width="24" height="24">
@@ -18,7 +18,7 @@
  <objectgroup name="MOBI" width="24" height="24">
   <object x="192" y="416" width="32" height="32">
    <properties>
-    <property name="type" value="000000111"/>
+    <property name="type" value="000100111"/>
    </properties>
   </object>
   <object x="128" y="416" width="32" height="32">
@@ -49,7 +49,7 @@
   <object x="672" y="416" width="32" height="32">
    <properties>
     <property name="next-level" value="level2"/>
-    <property name="type" value="101101101"/>
+    <property name="type" value="111011000"/>
    </properties>
   </object>
  </objectgroup>

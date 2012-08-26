@@ -114,7 +114,7 @@ public class Key extends Actor {
         circle.setRadius((texture.getWidth() /3 / 2) / Constants.BOX2D_SCALE_FACTOR);
         circle.setPosition(new Vector2(0, -(texture.getHeight() / (Constants.BOX2D_SCALE_FACTOR * 1.02f))));
 
-        playerSensorFixture = body.createFixture(circle, 0);
+        playerSensorFixture = body.createFixture(circle, 50);
 
         Filter filter = new Filter();
 

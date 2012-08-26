@@ -53,7 +53,7 @@ public class SplashScreen extends AbstractScreen {
             @Override
             public void completed(Action action) {
                 GameController.getInstance();
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, "level1"));
             }
         });
         splashImage.action(actions);
