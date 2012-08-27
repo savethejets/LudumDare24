@@ -34,7 +34,7 @@
   <object x="384" y="416" width="32" height="32">
    <properties>
     <property name="key" value="1"/>
-    <property name="type" value="111111000"/>
+    <property name="type" value="101001000"/>
    </properties>
   </object>
  </objectgroup>
@@ -48,7 +48,7 @@
  <objectgroup name="GOAL" width="24" height="24">
   <object x="672" y="416" width="32" height="32">
    <properties>
-    <property name="next-level" value="level2"/>
+    <property name="next-level" value="level8"/>
     <property name="type" value="111011000"/>
    </properties>
   </object>

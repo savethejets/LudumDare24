@@ -16,39 +16,26 @@
   <object x="-416" y="-32" width="416" height="800"/>
  </objectgroup>
  <objectgroup name="MOBI" width="24" height="24">
-  <object x="192" y="416" width="32" height="32">
+  <object x="352" y="416" width="32" height="32">
    <properties>
-    <property name="type" value="000100111"/>
+    <property name="type" value="000000111"/>
    </properties>
   </object>
-  <object x="128" y="416" width="32" height="32">
+  <object x="224" y="416" width="32" height="32">
    <properties>
-    <property name="type" value="010010010"/>
+    <property name="type" value="000100100"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup name="PLAYER_START" width="24" height="24">
   <object x="64" y="416" width="32" height="32"/>
  </objectgroup>
- <objectgroup name="KEYS" width="24" height="24">
-  <object x="384" y="416" width="32" height="32">
-   <properties>
-    <property name="key" value="1"/>
-    <property name="type" value="111111000"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup name="TETROIDS" width="24" height="24">
-  <object x="480" y="32" width="96" height="416">
-   <properties>
-    <property name="key" value="1"/>
-   </properties>
-  </object>
- </objectgroup>
+ <objectgroup name="KEYS" width="24" height="24"/>
+ <objectgroup name="TETROIDS" width="24" height="24"/>
  <objectgroup name="GOAL" width="24" height="24">
   <object x="672" y="416" width="32" height="32">
    <properties>
-    <property name="next-level" value="level2"/>
+    <property name="next-level" value="level7"/>
     <property name="type" value="111011000"/>
    </properties>
   </object>

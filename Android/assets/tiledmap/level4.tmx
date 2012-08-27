@@ -5,7 +5,7 @@
   <image source="blocks.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="17" name="tut3" tilewidth="32" tileheight="32">
-  <image source="../tut3.png" width="256" height="256"/>
+  <image source="tut3.png" width="256" height="256"/>
  </tileset>
  <layer name="Tile Layer 1" width="24" height="24">
   <data encoding="base64" compression="gzip">

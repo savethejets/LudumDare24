@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.tiled.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -38,7 +37,6 @@ public class GameScreen extends AbstractScreen {
     private TileMapRenderer tileMapRenderer;
     private ShapeRenderer shapeRenderer;
     private ShapeRenderer currentMobiRenderer;
-    private Texture backgroundSprite = new Texture("background.png");
 
     private List<Mobi> mobis = new ArrayList<Mobi>();
     private List<Key> keys = new ArrayList<Key>();
@@ -93,6 +91,7 @@ public class GameScreen extends AbstractScreen {
         SimpleTileAtlas simpleTileAtlas = new SimpleTileAtlas(map, Gdx.files.internal("tiledmap/"));
 
         tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 32, 32);
+        float totalWidth = tileMapRenderer.getMap().width * tileMapRenderer.getMap().tileWidth;
 
         // create collision
         for (TiledObjectGroup objectGroup : map.objectGroups) {
@@ -116,7 +115,7 @@ public class GameScreen extends AbstractScreen {
                         } else {
                             System.out.println("ERROR KEY WASNT DEFINED!!!");
                         }
-                        key.setPosition(object.x, object.y);
+                        key.setPosition(object.x, (int) totalWidth - object.y);
 
                         keys.add(key);
                     }
@@ -128,13 +127,14 @@ public class GameScreen extends AbstractScreen {
 
                         char[][] mapping = createMobiMappingFromTileTypeString(type);
 
+
                         Goal goal = new Goal(new MobiGenetics(mapping), world);
 
                         if (object.properties.containsKey("next-level")) {
                             String theKey = object.properties.get("next-level");
                             goal.setNextLevelString(theKey);
                         }
-                        goal.setPosition(object.x, object.y);
+                        goal.setPosition(object.x, (int) totalWidth - object.y);
 
                         keys.add(goal);
                     }
@@ -163,7 +163,7 @@ public class GameScreen extends AbstractScreen {
 
                         Mobi mobi = new Mobi(mobiGenetics, world);
 
-                        mobi.setPosition(object.x, object.y);
+                        mobi.setPosition(object.x, (int) (totalWidth - object.y));
 
                         mobis.add(mobi);
 

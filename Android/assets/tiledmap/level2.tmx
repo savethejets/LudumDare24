@@ -5,15 +5,18 @@
   <image source="blocks.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="17" name="tut2" tilewidth="32" tileheight="32">
-  <image source="../tut2.png" width="256" height="128"/>
+  <image source="tut2.png" width="256" height="128"/>
  </tileset>
  <layer name="Tile Layer 1" width="24" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3MNw6AMBQEUVNSkkUyskn3vyHT+ALoQ2HtSK8d55RSqQo1GrTo0GMw+o+YMGPBCo/N6B8QsePAiQu30S/19vd3xcdKyZrKuwdEtr1GAAkAAA==
+   H4sIAAAAAAAAA+3MOw6AIBQFUSgp+YgRQfe/S2cRDxPIneS045xSaxSRkFFwoOI0+l9ouNEx8OA1+qv/85MF2Zrauw+T6ncEAAkAAA==
   </data>
  </layer>
  <objectgroup name="COLLISION" width="24" height="24">
   <object x="0" y="448" width="768" height="160"/>
+  <object x="768" y="0" width="128" height="768"/>
+  <object x="-128" y="0" width="128" height="768"/>
+  <object x="-96" y="-96" width="992" height="96"/>
  </objectgroup>
  <objectgroup name="MOBI" width="24" height="24">
   <object x="672" y="416" width="32" height="32">

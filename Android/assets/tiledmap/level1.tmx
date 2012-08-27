@@ -5,14 +5,11 @@
   <image source="blocks.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="17" name="tut1" tilewidth="32" tileheight="32">
-  <image source="../tut1.png" width="256" height="128"/>
- </tileset>
- <tileset firstgid="49" name="tut3" tilewidth="32" tileheight="32">
-  <image source="../tut3.png" width="256" height="256"/>
+  <image source="tut1.png" width="256" height="128"/>
  </tileset>
  <layer name="Tile Layer 1" width="24" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3Nyw2AIBREUVi69IuoCK2Y2H9N3BrIY0PmJmc745xSqrUZC1Zs2HEg4Ozw9xvvRVy48SDhRUYx+viMdlrynU0yNDV2Fa1dSOAACQAA
+   H4sIAAAAAAAAA+3MSQqAMBQE0WTp0nmejXr/E1pnkC9C6IK3LeeUUm9LkSFHgRIVajQG/xYdegwYMWHGYvBfsWHHgYATF26D/9/5jyUSNRV3D7fWv3AACQAA
   </data>
  </layer>
  <objectgroup name="COLLISION" width="24" height="24">

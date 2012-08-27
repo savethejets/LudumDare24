@@ -32,7 +32,12 @@ public class MobiGenetics {
             char[] chars = geneticMap[i];
             for (int j = 0; j < chars.length; j++) {
                 char aChar = chars[j];
-                map[i][j] =  (char) (parentB.geneticMap[i][j] & aChar);
+                if (parentB.geneticMap[i][j] == 1 && aChar == 1) {
+                    map[i][j] = 1;
+                }
+                if (parentB.geneticMap[i][j] == 0 && aChar == 0) {
+                    map[i][j] = 0;
+                }
             }
         }
         return map;
