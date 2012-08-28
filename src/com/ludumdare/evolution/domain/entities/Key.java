@@ -83,6 +83,7 @@ public class Key extends Actor {
 
         float widthInc = pixmap.getWidth() / 3;
         float heightInc = pixmap.getHeight() / 3;
+        float fudge = 1f;
 
         float posYStart = getPosition().y - texture.getHeight() + heightInc/2;
         for (int i = 0; i < 3; i++) {
@@ -92,7 +93,7 @@ public class Key extends Actor {
                 char aChar = chars[j];
                 if (aChar == 1) {
                     PolygonShape poly = new PolygonShape();
-                    poly.setAsBox(widthInc/ 2 / Constants.BOX2D_SCALE_FACTOR, heightInc/ 2 / Constants.BOX2D_SCALE_FACTOR,
+                    poly.setAsBox((widthInc - fudge)/ 2 / Constants.BOX2D_SCALE_FACTOR, (heightInc - fudge) / 2 / Constants.BOX2D_SCALE_FACTOR,
                             new Vector2(posXStart / Constants.BOX2D_SCALE_FACTOR, posYStart / Constants.BOX2D_SCALE_FACTOR), 0);
                     playerPhysicsFixture = body.createFixture(poly, 1);
 

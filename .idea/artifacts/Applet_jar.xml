@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Applet:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Applet_jar</output-path>
+    <root id="archive" name="Applet_jar.jar">
+      <element id="module-output" name="Desktop" />
+      <element id="directory" name="music">
+        <element id="dir-copy" path="$PROJECT_DIR$/Android/assets/music" />
+      </element>
+      <element id="directory" name="tiledmap">
+        <element id="dir-copy" path="$PROJECT_DIR$/Android/assets/tiledmap" />
+      </element>
+      <element id="module-output" name="LudumDare24" />
+      <element id="dir-copy" path="$PROJECT_DIR$/Android/assets" />
+    </root>
+  </artifact>
+</component>

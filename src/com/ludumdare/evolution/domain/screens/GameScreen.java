@@ -50,6 +50,7 @@ public class GameScreen extends AbstractScreen {
     private long lastSexTime;
 
     private String currentLevel;
+    private long lastMusicCheck = -1;
 
     @Override
     public void dispose() {
@@ -91,7 +92,7 @@ public class GameScreen extends AbstractScreen {
         SimpleTileAtlas simpleTileAtlas = new SimpleTileAtlas(map, Gdx.files.internal("tiledmap/"));
 
         tileMapRenderer = new TileMapRenderer(map, simpleTileAtlas, 32, 32);
-        float totalWidth = tileMapRenderer.getMap().width * tileMapRenderer.getMap().tileWidth;
+        float totalHeight = tileMapRenderer.getMap().height * tileMapRenderer.getMap().tileHeight;
 
         // create collision
         for (TiledObjectGroup objectGroup : map.objectGroups) {
@@ -115,7 +116,7 @@ public class GameScreen extends AbstractScreen {
                         } else {
                             System.out.println("ERROR KEY WASNT DEFINED!!!");
                         }
-                        key.setPosition(object.x, (int) totalWidth - object.y);
+                        key.setPosition(object.x, (int) totalHeight - object.y);
 
                         keys.add(key);
                     }
@@ -134,7 +135,7 @@ public class GameScreen extends AbstractScreen {
                             String theKey = object.properties.get("next-level");
                             goal.setNextLevelString(theKey);
                         }
-                        goal.setPosition(object.x, (int) totalWidth - object.y);
+                        goal.setPosition(object.x, (int) totalHeight - object.y);
 
                         keys.add(goal);
                     }
@@ -148,7 +149,7 @@ public class GameScreen extends AbstractScreen {
             if (PLAYER_START_OBJECT_GROUP.equals(objectGroup.name)) {
                 TiledObject object = objectGroup.objects.get(0);
 
-                GameController.getInstance().getCurrentMobi().setPosition(object.x, object.y);
+                GameController.getInstance().getCurrentMobi().setPosition(object.x, (int) (totalHeight - object.y));
             }
             if (MOBI_OBJECT_GROUP.equals(objectGroup.name)) {
                 for (TiledObject object : objectGroup.objects) {
@@ -163,7 +164,13 @@ public class GameScreen extends AbstractScreen {
 
                         Mobi mobi = new Mobi(mobiGenetics, world);
 
-                        mobi.setPosition(object.x, (int) (totalWidth - object.y));
+                        if (object.properties.containsKey("static")) {
+                            if(object.properties.get("static").equals("true")){
+                                mobi.setStaticPosition(true);
+                            }
+                        }
+
+                        mobi.setPosition(object.x, (int) (totalHeight - object.y));
 
                         mobis.add(mobi);
 
@@ -395,19 +402,12 @@ public class GameScreen extends AbstractScreen {
                 jump = false;
                 if (grounded) {
                     currentMobi.setLinearVelocity(vel.x, 0);
-
-                    System.out.println("vel before: " + vel.x);
-                    System.out.println("jump before: " + currentMobi.getLinearVelocity());
-
                     currentMobi.setTransform(pos.x, pos.y + 0.01f, 0);
-
                     currentMobi.applyLinearImpulse(0, currentMobi.getJumpVelocity(), pos.x, pos.y);
-
-                    System.out.println("jump, " + currentMobi.getLinearVelocity());
                 }
             }
 
-            world.step(Gdx.graphics.getDeltaTime(), 4, 4);
+            world.step(1/60.0f, 8, 3);
 
             currentMobi.setAwake(true);
 
@@ -452,8 +452,13 @@ public class GameScreen extends AbstractScreen {
                     currentMobi.getPosition().x, triangleY - 10);
             currentMobiRenderer.end();
 
-            if (!GameController.getInstance().isMusicPlaying()) {
-                GameController.getInstance().playNextSong();
+            if (lastMusicCheck == -1f || TimeUtils.millis() - lastMusicCheck  > 3000) {
+
+                lastMusicCheck = TimeUtils.millis();
+
+                if (!GameController.getInstance().isMusicPlaying()) {
+                    GameController.getInstance().playNextSong();
+                }
             }
 
 //            renderer.render(world, cam.combined.scale(
@@ -486,13 +491,7 @@ public class GameScreen extends AbstractScreen {
         if (keycode == Input.Keys.E && !jump) {
             Mobi currentMobi = GameController.getInstance().getCurrentMobi();
 
-            int i = mobis.indexOf(currentMobi);
-
-            if (i < mobis.size() - 1) {
-                i++;
-            } else {
-                i = 0;
-            }
+            int i = findNextMobi(currentMobi);
 
             currentMobi.setFriction(0.2f);
 
@@ -515,6 +514,17 @@ public class GameScreen extends AbstractScreen {
             GameController.getInstance().setCurrentMobi(mobis.get(i));
         }
         return false;
+    }
+
+    private int findNextMobi(Mobi currentMobi) {
+        int i = mobis.indexOf(currentMobi);
+
+        if (i < mobis.size() - 1) {
+            i++;
+        } else {
+            i = 0;
+        }
+        return i;
     }
 
     public List<Mobi> getMobis() {

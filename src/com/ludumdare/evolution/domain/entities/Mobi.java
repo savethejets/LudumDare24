@@ -27,6 +27,7 @@ public class Mobi extends Actor {
 
     private Object groundedPlatform;
     private Texture texture;
+    private boolean staticPosition;
 
     private Pixmap pixmap;
     private ShapeRenderer renderer = new ShapeRenderer();
@@ -91,6 +92,7 @@ public class Mobi extends Actor {
                     filter.categoryBits = 0x0002;
                     filter.maskBits = 0x0002;
 
+                    playerPhysicsFixture.setUserData(this);
                     playerPhysicsFixture.setFilterData(filter);
 
                     poly.dispose();
@@ -289,26 +291,13 @@ public class Mobi extends Actor {
             if (contact.isTouching()
                     && (contact.getFixtureA() == playerSensorFixture || contact.getFixtureB() == playerSensorFixture)) {
 
-                Vector2 pos = body.getPosition();
                 WorldManifold manifold = contact.getWorldManifold();
                 boolean below = true;
                 for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
-                        below &= (manifold.getPoints()[j].y < pos.y);
+                        below &= (manifold.getPoints()[j].y < body.getPosition().y);
                 }
 
-                if (below) {
-                    //@todo this user data constant sucks.
-                    if (contact.getFixtureA().getUserData() != null && contact.getFixtureA().getUserData().equals("p")) {
-                        groundedPlatform = contact.getFixtureA().getBody().getUserData();
-                    }
-
-                    if (contact.getFixtureB().getUserData() != null && contact.getFixtureB().getUserData().equals("p")) {
-                        groundedPlatform = contact.getFixtureB().getBody().getUserData();
-                    }
-                    return true;
-                }
-
-                return false;
+                return below;
             }
         }
         return false;
@@ -341,7 +330,9 @@ public class Mobi extends Actor {
     }
 
     public void applyLinearImpulse(float i, float i1, float x, float y) {
-        body.applyLinearImpulse(i, i1, x, y);
+        if (!staticPosition) {
+            body.applyLinearImpulse(i, i1, x, y);
+        }
     }
 
     public void setTransform(float x, float v, int i) {
@@ -383,5 +374,13 @@ public class Mobi extends Actor {
 
     public void destroy(World world) {
         world.destroyBody(body);
+    }
+
+    public boolean isStaticPosition() {
+        return staticPosition;
+    }
+
+    public void setStaticPosition(boolean staticPosition) {
+        this.staticPosition = staticPosition;
     }
 }

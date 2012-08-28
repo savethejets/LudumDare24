@@ -1,10 +1,13 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="Desktop:jar">
+  <artifact type="jar" name="Desktop:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Desktop_jar</output-path>
+    <properties id="ant-postprocessing">
+      <options enabled="true">
+        <file>file://$PROJECT_DIR$/module_ludumdare24.xml</file>
+        <target>sign</target>
+      </options>
+    </properties>
     <root id="archive" name="Desktop.jar">
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/Desktop/src/META-INF/MANIFEST.MF" />
-      </element>
       <element id="module-output" name="Desktop" />
       <element id="module-output" name="LudumDare24" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../../Libraries/Java/libgdx-0.9.6/gdx-natives.jar" path-in-jar="/" />
@@ -17,7 +20,9 @@
       <element id="directory" name="tiledmap">
         <element id="dir-copy" path="$PROJECT_DIR$/Android/assets/tiledmap" />
       </element>
-      <element id="dir-copy" path="$PROJECT_DIR$/Android/assets" />
+      <element id="directory" name="assets">
+        <element id="dir-copy" path="$PROJECT_DIR$/Android/assets" />
+      </element>
     </root>
   </artifact>
 </component>

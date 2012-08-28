@@ -33,9 +33,9 @@ public class MobiGeneticsTypes {
     };
 
     public static char[][] complete = {
-            {0,0,0},
-            {0,0,0},
-            {0,0,0},
+            {1,1,1},
+            {1,1,1},
+            {1,1,1},
     };
 
 
